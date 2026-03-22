@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'motion/react';
+import Link from 'next/link';
 import { ArrowDownRight, Box, Database, FileText, Layout, Search, Shield, User } from 'lucide-react';
 
 export default function Home() {
@@ -194,35 +195,46 @@ export default function Home() {
             {[
               { title: "Team & Proposal", icon: FileText, status: "Completed", active: true },
               { title: "User Research", icon: Search, status: "Coming Soon", active: false },
-              { title: "Prototypes", icon: Layout, status: "Coming Soon", active: false },
+              { title: "Prototypes", icon: Layout, status: "View Prototypes", active: true, href: "/phase3" },
               { title: "Implementation", icon: Shield, status: "Coming Soon", active: false }
-            ].map((item, i) => (
-              <motion.div
-                key={item.title}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1, duration: 0.6 }}
-                className={`border p-8 flex flex-col h-full ${
-                  item.active 
-                    ? 'border-[#E8C547] bg-[#E8C547]/5' 
-                    : 'border-[#2A2A2A] bg-[#0A0A0A] opacity-60'
-                }`}
-              >
-                <div className="flex justify-between items-start mb-12">
-                  <item.icon className={`w-8 h-8 ${item.active ? 'text-[#E8C547]' : 'text-[#F0EDE8]/30'}`} />
-                  <span className={`text-[10px] uppercase tracking-widest px-2 py-1 border ${
+            ].map((item, i) => {
+              const CardContent = (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.1, duration: 0.6 }}
+                  className={`border p-8 flex flex-col h-full transition-colors duration-500 ${
                     item.active 
-                      ? 'border-[#E8C547] text-[#E8C547]' 
-                      : 'border-[#2A2A2A] text-[#F0EDE8]/50'
-                  }`}>
-                    {item.status}
-                  </span>
+                      ? 'border-[#E8C547] bg-[#E8C547]/5 hover:bg-[#E8C547]/10' 
+                      : 'border-[#2A2A2A] bg-[#0A0A0A] opacity-60'
+                  }`}
+                >
+                  <div className="flex justify-between items-start mb-12">
+                    <item.icon className={`w-8 h-8 ${item.active ? 'text-[#E8C547]' : 'text-[#F0EDE8]/30'}`} />
+                    <span className={`text-[10px] uppercase tracking-widest px-2 py-1 border ${
+                      item.active 
+                        ? 'border-[#E8C547] text-[#E8C547]' 
+                        : 'border-[#2A2A2A] text-[#F0EDE8]/50'
+                    }`}>
+                      {item.status}
+                    </span>
+                  </div>
+                  <h3 className="font-serif text-2xl mt-auto">{item.title}</h3>
+                  <div className="text-xs font-mono text-[#F0EDE8]/40 mt-4">Phase 0{i + 1}</div>
+                </motion.div>
+              );
+
+              return item.href ? (
+                <Link href={item.href} key={item.title} className="block h-full group">
+                  {CardContent}
+                </Link>
+              ) : (
+                <div key={item.title} className="block h-full cursor-not-allowed">
+                  {CardContent}
                 </div>
-                <h3 className="font-serif text-2xl mt-auto">{item.title}</h3>
-                <div className="text-xs font-mono text-[#F0EDE8]/40 mt-4">Phase 0{i + 1}</div>
-              </motion.div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>
