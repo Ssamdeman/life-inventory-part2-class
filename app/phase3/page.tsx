@@ -8,6 +8,7 @@ import Link from 'next/link';
 export default function Phase3Prototypes() {
   const [showStoryboards, setShowStoryboards] = useState(false);
   const [showSketches, setShowSketches] = useState(false);
+  const [showWinner, setShowWinner] = useState(false);
   const [activeMember, setActiveMember] = useState<string | null>(null);
 
   // Sample storyboard panels based on typical human-drawn uploads
@@ -335,6 +336,151 @@ export default function Phase3Prototypes() {
                   <div className="text-center mt-8">
                     <span className="text-[10px] uppercase tracking-widest text-[#F0EDE8]/30">End of Sketches</span>
                   </div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </section>
+
+      {/* Selected Design Section */}
+      <section className="py-24 px-6 border-t border-[#2A2A2A] bg-[#0A0A0A] min-h-[50vh]">
+        <div className="max-w-7xl mx-auto">
+          {/* Global Toggle Button for Selected Design */}
+          <motion.button
+            onClick={() => setShowWinner(!showWinner)}
+            className={`w-full group relative border p-8 md:p-12 flex flex-col md:flex-row items-start md:items-center justify-between overflow-hidden transition-all duration-700 ${showWinner
+                ? 'border-[#E8C547] bg-[#E8C547] text-[#0A0A0A]'
+                : 'border-[#2A2A2A] bg-[#0F0F0F] text-[#F0EDE8] hover:border-[#E8C547]/50'
+              }`}
+          >
+            <div className="absolute inset-0 bg-gradient-to-r from-[#E8C547]/0 via-[#E8C547]/5 to-[#E8C547]/0 transform -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+
+            <div className="relative z-10 flex flex-col items-start text-left mb-6 md:mb-0">
+              <span className="text-xs uppercase tracking-widest opacity-60 font-mono mb-4 flex items-center gap-2">
+                <Grip className="w-4 h-4" /> Global Toggle
+              </span>
+              <h2 className="font-serif text-4xl md:text-6xl">
+                {showWinner ? 'Hide' : 'View'} Final Design
+              </h2>
+            </div>
+
+            <div className="relative z-10">
+              <div className={`p-4 rounded-full border transition-colors duration-500 ${showWinner ? 'border-[#0A0A0A]/20' : 'border-[#2A2A2A] group-hover:border-[#E8C547]'
+                }`}>
+                <Maximize2 className={`w-8 h-8 transition-transform duration-700 ${showWinner ? 'rotate-180 text-[#0A0A0A]' : 'text-[#E8C547]'}`} />
+              </div>
+            </div>
+          </motion.button>
+
+          <AnimatePresence>
+            {showWinner && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                className="overflow-hidden"
+              >
+                <div className="pt-24 pb-12">
+                  <div className="mb-16">
+                    <h2 className="font-serif text-5xl md:text-7xl mb-6">Winning <span className="text-[#E8C547] italic">Design.</span></h2>
+                    <p className="max-w-2xl text-lg text-[#F0EDE8]/60 leading-relaxed mb-12">
+                      After reviewing all individual sketches, the group selected <strong className="text-[#E8C547] font-normal">Sonal&apos;s interface design</strong>. Below are the definitive panels mapping the unified approach for Life Inventory.
+                    </p>
+                  </div>
+
+                  {/* Winner Grid */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 mb-20">
+                    {[
+                      { id: 'w1', src: '/assets/phase3/sonal_sketch1.jpg', alt: "Winning Sketch - Panel 1" },
+                      { id: 'w2', src: '/assets/phase3/sonal_sketch2.jpg', alt: "Winning Sketch - Panel 2" },
+                    ].map((panel, idx) => (
+                      <motion.div
+                        key={panel.id}
+                        initial={{ opacity: 0, y: 40 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.6, delay: idx * 0.1 }}
+                        className="group flex flex-col"
+                      >
+                        <div className="relative w-full border border-[#2A2A2A] bg-[#050505] group-hover:border-[#E8C547] transition-colors duration-500 overflow-hidden flex items-center justify-center min-h-[400px]">
+                          <img
+                            src={panel.src}
+                            alt={panel.alt}
+                            className="w-full h-auto object-contain transition-transform duration-700 group-hover:scale-[1.02] relative z-10"
+                            onError={(e) => {
+                              e.currentTarget.style.display = 'none';
+                              const fallback = e.currentTarget.nextElementSibling as HTMLElement;
+                              if (fallback) fallback.style.display = 'flex';
+                            }}
+                            onLoad={(e) => {
+                              const fallback = e.currentTarget.nextElementSibling as HTMLElement;
+                              if (fallback) fallback.style.display = 'none';
+                            }}
+                          />
+                          <div className="absolute inset-0 flex-col items-center justify-center p-6 text-center" style={{ display: 'flex' }}>
+                            <span className="text-[10px] font-mono uppercase tracking-widest text-[#E8C547] border border-[#E8C547] px-3 py-1 mb-3">Pending Upload</span>
+                            <span className="text-sm font-serif italic text-[#F0EDE8]/70 block">{panel.alt}</span>
+                            <span className="text-[10px] font-mono text-[#F0EDE8]/40 mt-2 block">{panel.src}</span>
+                          </div>
+                        </div>
+                        <div className="pt-4 border-t border-[#2A2A2A] mt-4 flex items-center justify-between">
+                          <span className="text-xs font-mono font-bold text-[#E8C547]">0{idx + 1}</span>
+                          <span className="text-xs font-mono uppercase tracking-widest text-[#F0EDE8]/50">Selected Interface</span>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+
+                  {/* Text Analysis Grid */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-12 border-t border-[#2A2A2A] pt-16">
+                    {/* Why Chosen */}
+                    <div>
+                      <h3 className="text-sm font-mono uppercase tracking-widest text-[#E8C547] mb-6 border-b border-[#2A2A2A] pb-4">Provide a clear explanation of why this design was chosen</h3>
+                      <p className="text-[#F0EDE8]/70 leading-relaxed mb-6 font-serif text-lg">
+                        Sonal&apos;s interface effortlessly unifies our three core requirements without cluttering the screen.
+                      </p>
+                      <ul className="space-y-4 text-sm font-mono text-[#F0EDE8]/50">
+                        <li className="flex gap-4">
+                          <span className="text-[#E8C547]">T1</span>
+                          <span>The Register flow is lightning fast—anchored by an inescapable primary action button that launches immediately into camera collection and semantic tagging.</span>
+                        </li>
+                        <li className="flex gap-4">
+                          <span className="text-[#E8C547]">T2</span>
+                          <span>The Find Item architecture avoids complex tree-menus, opting for a highly responsive visual grid backed by contextual search.</span>
+                        </li>
+                        <li className="flex gap-4">
+                          <span className="text-[#E8C547]">T3</span>
+                          <span>The Verify Stock UI provides frictionless (+/-) steppers directly on the item detail screen, solving the core tracking hurdle with zero cognitive load.</span>
+                        </li>
+                      </ul>
+                    </div>
+
+                    {/* Why Overruled */}
+                    <div>
+                      <h3 className="text-sm font-mono uppercase tracking-widest text-[#E8C547] mb-6 border-b border-[#2A2A2A] pb-4">Briefly explain why the other sketches were not selected</h3>
+                      <p className="text-[#F0EDE8]/70 leading-relaxed mb-6 font-serif text-lg">
+                        While the alternative sketches brought valuable perspectives, they ultimately misaligned with our aesthetic and functional goals for a frictionless physical inventory engine.
+                      </p>
+                      <ul className="space-y-4 text-sm font-mono text-[#F0EDE8]/50">
+                        <li className="flex gap-4">
+                          <span className="text-[#E8C547] opacity-50">01</span>
+                          <span>Richard&apos;s approach relied heavily on text-dense metadata forms during item registration (Task 1), which directly opposed our goal of rapid, environment-based entry.</span>
+                        </li>
+                        <li className="flex gap-4">
+                          <span className="text-[#E8C547] opacity-50">02</span>
+                          <span>Samuel&apos;s design introduced deep hierarchical menus. This nested architecture buried the Stock Verification UI (Task 3), introducing too much friction for an action meant to occur seamlessly in real-world scenarios.</span>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+
+                  {/* End of Section marker */}
+                  <div className="mt-24 w-full h-[1px] bg-gradient-to-r from-transparent via-[#2A2A2A] to-transparent"></div>
+                  <div className="text-center mt-8">
+                    <span className="text-[10px] uppercase tracking-widest text-[#F0EDE8]/30">End of Phase 03</span>
+                  </div>
+
                 </div>
               </motion.div>
             )}
