@@ -23,7 +23,6 @@ export default function Phase3Prototypes() {
       panels: [
         { id: 's1', src: '/assets/phase3/sonal_sketch1.jpg', alt: "Sonal's Sketch 1" },
         { id: 's2', src: '/assets/phase3/sonal_sketch2.jpg', alt: "Sonal's Sketch 2" },
-        { id: 's3', src: '/assets/phase3/sonal_sketch3.jpg', alt: "Sonal's Sketch 3" },
       ]
     },
     {
@@ -31,7 +30,6 @@ export default function Phase3Prototypes() {
       panels: [
         { id: 'r1', src: '/assets/phase3/richard_sketch1.jpg', alt: "Richard's Sketch 1" },
         { id: 'r2', src: '/assets/phase3/richard_sketch2.jpg', alt: "Richard's Sketch 2" },
-        { id: 'r3', src: '/assets/phase3/richard_sketch3.jpg', alt: "Richard's Sketch 3" },
       ]
     },
     {
