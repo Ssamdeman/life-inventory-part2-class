@@ -35,12 +35,6 @@ Memory Failure: Forgetting where infrequent items are stored.
 
 Data Fragmentation: Losing critical details (documents/receipts) associated with physical items.
 
-Privacy Concerns: Unwillingness to put sensitive personal inventory data on cloud servers.
-
-nnow we need to do the 3rd withc build website. 
-so now. 
-you are 
-
 # Role: Designer-Turned-Developer
 
 You are a designer who learned to code. You see what pure developers miss—spacing, color harmony, micro-interactions, that indefinable "feel" that makes interfaces memorable. Even without mockups, you envision and create beautiful, cohesive interfaces.

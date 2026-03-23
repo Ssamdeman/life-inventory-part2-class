@@ -229,10 +229,30 @@ export default function Phase3Prototypes() {
               >
                 <div className="pt-24 pb-12">
                   <div className="mb-16">
-                    <h2 className="font-serif text-5xl md:text-7xl mb-6">Interface <span className="text-[#E8C547] italic">Sketches.</span></h2>
-                    <p className="max-w-2xl text-lg text-[#F0EDE8]/60 leading-relaxed">
-                      Divergent explorations of the Life Inventory interface. Each team member sketched their own vision of the UI before we converged on a unified design.
+                    <h2 className="font-serif text-5xl md:text-7xl mb-8">Interface <span className="text-[#E8C547] italic">Sketches.</span></h2>
+                    <p className="max-w-2xl text-lg text-[#F0EDE8]/60 leading-relaxed mb-12">
+                      Here are the distinct interface approaches from all team members. To ensure we met the core requirements, each set of sketches must support the following three critical tasks:
                     </p>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                      <div className="border border-[#2A2A2A] bg-[#0F0F0F] p-6 hover:border-[#E8C547]/50 transition-colors">
+                        <span className="text-xs font-mono uppercase tracking-widest text-[#E8C547] mb-4 block">Task 01</span>
+                        <h4 className="font-serif text-xl mb-3">Register Item</h4>
+                        <p className="text-sm font-mono text-[#F0EDE8]/50 leading-relaxed">Home screen (Add button) <span className="text-[#E8C547] mx-1">→</span> Camera view <span className="text-[#E8C547] mx-1">→</span> Data entry form (tags, location dropdown) <span className="text-[#E8C547] mx-1">→</span> Save confirmation.</p>
+                      </div>
+
+                      <div className="border border-[#2A2A2A] bg-[#0F0F0F] p-6 hover:border-[#E8C547]/50 transition-colors">
+                        <span className="text-xs font-mono uppercase tracking-widest text-[#E8C547] mb-4 block">Task 02</span>
+                        <h4 className="font-serif text-xl mb-3">Find Item</h4>
+                        <p className="text-sm font-mono text-[#F0EDE8]/50 leading-relaxed">Search interface/voice prompt <span className="text-[#E8C547] mx-1">→</span> Results list <span className="text-[#E8C547] mx-1">→</span> Item detail screen (showing location/photo).</p>
+                      </div>
+
+                      <div className="border border-[#2A2A2A] bg-[#0F0F0F] p-6 hover:border-[#E8C547]/50 transition-colors">
+                        <span className="text-xs font-mono uppercase tracking-widest text-[#E8C547] mb-4 block">Task 03</span>
+                        <h4 className="font-serif text-xl mb-3">Verify Stock</h4>
+                        <p className="text-sm font-mono text-[#F0EDE8]/50 leading-relaxed">Quick search/filter screen <span className="text-[#E8C547] mx-1">→</span> Item detail screen (showing &quot;Quantity&quot; and &quot;Last Seen&quot;) <span className="text-[#E8C547] mx-1">→</span> Update UI (+/- buttons).</p>
+                      </div>
+                    </div>
                   </div>
 
                   <div className="flex flex-col gap-6">
