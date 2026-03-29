@@ -8,39 +8,63 @@ import Link from 'next/link';
 const prototypeScreens = [
   {
     id: 'p1',
-    label: 'Home Screen',
-    description: 'Showing inventory collections — Electronics, Kitchen, Closet, etc.',
-    src: '/assets/phase4/home_screen.jpg',
+    label: 'Home Dashboard',
+    description: 'Items: 12, Rooms: 4, +Add Item button.',
+    src: '/assets/phase4/screen_1.jpeg',
   },
   {
     id: 'p2',
-    label: 'Data Entry Form',
-    description: 'Item Name, Room, Location Photo, Labels, and Quantity fields filled in.',
-    src: '/assets/phase4/data_entry_form.jpg',
+    label: 'Camera Capture',
+    description: 'Take Photo — tap to capture.',
+    src: '/assets/phase4/screen_2.jpeg',
   },
   {
     id: 'p3',
-    label: 'Search Screen',
-    description: "With 'charger' typed in the search bar.",
-    src: '/assets/phase4/search_screen.jpg',
+    label: 'Add New Item Form',
+    description: 'Item Name, Tags, Quantity, Save — with purple sticky note showing item.',
+    src: '/assets/phase4/screen_3.jpeg',
   },
   {
     id: 'p4',
-    label: 'Item Detail Screen',
-    description: 'Showing location photo, room, and drawer information.',
-    src: '/assets/phase4/item_detail_screen.jpg',
+    label: 'Item Saved Confirmation',
+    description: 'Checkmark, Done button.',
+    src: '/assets/phase4/screen_4.jpeg',
   },
   {
     id: 'p5',
-    label: 'Stock Detail Screen',
-    description: 'Showing Toilet Paper with Quantity: 8 rolls and Last Bought: 2 weeks ago.',
-    src: '/assets/phase4/stock_detail_screen.jpg',
+    label: 'Find Item Search',
+    description: 'Search bar, Filter: All, purple overlay.',
+    src: '/assets/phase4/screen_5.jpeg',
   },
   {
     id: 'p6',
-    label: 'Update Stock Screen',
-    description: 'Showing +/- stepper buttons for quantity update.',
-    src: '/assets/phase4/update_stock_screen.jpg',
+    label: 'Search Results',
+    description: 'Charger / Bedroom, USB Cable / Laptop Bag, Earphones / Drawer.',
+    src: '/assets/phase4/screen_6.jpeg',
+  },
+  {
+    id: 'p7',
+    label: 'Item Detail',
+    description: 'Charger, location photo, Room: Bedroom, Desk drawer, Yes / No found.',
+    src: '/assets/phase4/screen_7.jpeg',
+  },
+  {
+    id: 'p8',
+    label: 'Quick Check / Stock Search',
+    description: 'Search item, Filter: Kitchen / All rooms.',
+    src: '/assets/phase4/screen_8.jpeg',
+  },
+  {
+    id: 'p9',
+    label: 'Stock Detail',
+    description: 'Toilet Paper, Quantity: 8 rolls, Last bought: 2 weeks ago.',
+    src: '/assets/phase4/screen_9.jpeg',
+  },
+  {
+    id: 'p10',
+    label: 'Update Stock',
+    description: 'Toilet Paper, -/8/+, Update button.',
+    src: '/assets/phase4/screen_10.jpeg',
   },
 ];
 
@@ -150,7 +174,7 @@ export default function Phase4PaperPrototyping() {
                         key={screen.id}
                         className="flex items-start gap-4 border border-[#2A2A2A] bg-[#0F0F0F] px-5 py-4 hover:border-[#E8C547]/30 transition-colors duration-300"
                       >
-                        <span className="text-[#E8C547] font-mono text-[10px] mt-[2px] shrink-0">0{i + 1}</span>
+                        <span className="text-[#E8C547] font-mono text-[10px] mt-[2px] shrink-0">{String(i + 1).padStart(2, '0')}</span>
                         <div>
                           <p className="text-xs font-mono uppercase tracking-widest text-[#F0EDE8]/80 mb-1">{screen.label}</p>
                           <p className="text-[11px] font-mono text-[#F0EDE8]/40 leading-relaxed">{screen.description}</p>
@@ -200,7 +224,7 @@ export default function Phase4PaperPrototyping() {
 
                         {/* Caption */}
                         <div className="pt-4 border-t border-[#2A2A2A] mt-4 flex items-start justify-between gap-4">
-                          <span className="text-xs font-mono font-bold text-[#E8C547] shrink-0">0{idx + 1}</span>
+                          <span className="text-xs font-mono font-bold text-[#E8C547] shrink-0">{String(idx + 1).padStart(2, '0')}</span>
                           <div className="text-right">
                             <p className="text-xs font-mono uppercase tracking-widest text-[#F0EDE8]/70">{screen.label}</p>
                             <p className="text-[11px] font-mono text-[#F0EDE8]/40 mt-1 leading-relaxed">{screen.description}</p>
