@@ -174,8 +174,36 @@ export default function Phase3Prototypes() {
                     ))}
                   </div>
 
+                  {/* Task Descriptions */}
+                  <div className="mt-16 border-t border-[#2A2A2A] pt-12">
+                    <div className="text-xs uppercase tracking-widest text-[#E8C547] mb-8 flex items-center gap-3">
+                      <span className="w-6 h-[1px] bg-[#E8C547]"></span>
+                      Storyboard Tasks
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                      <div className="border border-[#2A2A2A] bg-[#0F0F0F] p-6 hover:border-[#E8C547]/50 transition-colors duration-300">
+                        <span className="text-[10px] font-mono uppercase tracking-widest text-[#E8C547] mb-4 block">Task 01</span>
+                        <p className="text-sm font-mono text-[#F0EDE8]/50 leading-relaxed italic">
+                          Register Item: Mike needs batteries but cannot remember where he stored them. He searches the Life Inventory app, which shows the storage location and image. He quickly finds the batteries.
+                        </p>
+                      </div>
+                      <div className="border border-[#2A2A2A] bg-[#0F0F0F] p-6 hover:border-[#E8C547]/50 transition-colors duration-300">
+                        <span className="text-[10px] font-mono uppercase tracking-widest text-[#E8C547] mb-4 block">Task 02</span>
+                        <p className="text-sm font-mono text-[#F0EDE8]/50 leading-relaxed italic">
+                          Find Item: Mike just found a new laptop. He opens the app, searches for it, enters the item name, tags and category, chooses a storage location, and saves the item.
+                        </p>
+                      </div>
+                      <div className="border border-[#2A2A2A] bg-[#0F0F0F] p-6 hover:border-[#E8C547]/50 transition-colors duration-300">
+                        <span className="text-[10px] font-mono uppercase tracking-widest text-[#E8C547] mb-4 block">Task 03</span>
+                        <p className="text-sm font-mono text-[#F0EDE8]/50 leading-relaxed italic">
+                          Verify Stock: Mike is considering buying toilet paper but is unsure if he already has some at home. He searches the app and, seeing the stock and last bought date, decides not to buy it.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
                   {/* End of Gallery marker */}
-                  <div className="mt-24 w-full h-[1px] bg-gradient-to-r from-transparent via-[#2A2A2A] to-transparent"></div>
+                  <div className="mt-16 w-full h-[1px] bg-gradient-to-r from-transparent via-[#2A2A2A] to-transparent"></div>
                   <div className="text-center mt-8">
                     <span className="text-[10px] uppercase tracking-widest text-[#F0EDE8]/30">End of Sequence</span>
                   </div>

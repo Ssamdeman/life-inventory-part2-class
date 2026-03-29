@@ -194,7 +194,7 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
               { title: "Team & Proposal", icon: FileText, status: "Completed", active: true },
-              { title: "User Research", icon: Search, status: "Coming Soon", active: false },
+              { title: "User Research", icon: Search, status: "View Research", active: true, href: "https://docs.google.com/document/d/1ijwiZ2esJcOggPSCCBuAet3GCP76u_MSNPaDiXk81OE/edit?usp=sharing", newTab: true },
               { title: "Prototypes", icon: Layout, status: "View Prototypes", active: true, href: "/phase3" },
               { title: "Implementation", icon: Shield, status: "Coming Soon", active: false }
             ].map((item, i) => {
@@ -226,9 +226,15 @@ export default function Home() {
               );
 
               return item.href ? (
-                <Link href={item.href} key={item.title} className="block h-full group">
-                  {CardContent}
-                </Link>
+                item.newTab ? (
+                  <a href={item.href} key={item.title} target="_blank" rel="noopener noreferrer" className="block h-full group">
+                    {CardContent}
+                  </a>
+                ) : (
+                  <Link href={item.href} key={item.title} className="block h-full group">
+                    {CardContent}
+                  </Link>
+                )
               ) : (
                 <div key={item.title} className="block h-full cursor-not-allowed">
                   {CardContent}
