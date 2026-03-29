@@ -115,7 +115,7 @@ export default function Phase4PaperPrototyping() {
       </section>
 
       {/* Prototype Photos Toggle Section */}
-      <section className="py-24 px-6 min-h-[50vh]">
+      <section className="py-6 px-6">
         <div className="max-w-7xl mx-auto">
           {/* Global Toggle Button */}
           <motion.button
@@ -252,7 +252,7 @@ export default function Phase4PaperPrototyping() {
       </section>
 
       {/* Briefing Section */}
-      <section className="py-24 px-6 border-t border-[#2A2A2A]">
+      <section className="py-6 px-6 border-t border-[#2A2A2A]">
         <div className="max-w-7xl mx-auto">
           {/* Global Toggle Button */}
           <motion.button
@@ -335,7 +335,7 @@ export default function Phase4PaperPrototyping() {
       </section>
 
       {/* Team Roles Section */}
-      <section className="py-24 px-6 border-t border-[#2A2A2A]">
+      <section className="py-6 px-6 border-t border-[#2A2A2A]">
         <div className="max-w-7xl mx-auto">
           <motion.button
             onClick={() => setShowTeamRoles(!showTeamRoles)}
@@ -450,7 +450,7 @@ export default function Phase4PaperPrototyping() {
       </section>
 
       {/* Scenario Task Cards Section */}
-      <section className="py-24 px-6 border-t border-[#2A2A2A]">
+      <section className="py-6 px-6 border-t border-[#2A2A2A]">
         <div className="max-w-7xl mx-auto">
           <motion.button
             onClick={() => setShowTaskCards(!showTaskCards)}
@@ -566,7 +566,7 @@ export default function Phase4PaperPrototyping() {
       </section>
 
       {/* Observations Section */}
-      <section className="py-24 px-6 border-t border-[#2A2A2A]">
+      <section className="py-6 px-6 border-t border-[#2A2A2A]">
         <div className="max-w-7xl mx-auto">
           <motion.button
             onClick={() => setShowObservations(!showObservations)}
@@ -709,7 +709,7 @@ export default function Phase4PaperPrototyping() {
       </section>
 
       {/* Prototype Iteration Section */}
-      <section className="py-24 px-6 border-t border-[#2A2A2A]">
+      <section className="py-6 px-6 border-t border-[#2A2A2A]">
         <div className="max-w-7xl mx-auto">
           <motion.button
             onClick={() => setShowIteration(!showIteration)}
@@ -776,7 +776,7 @@ export default function Phase4PaperPrototyping() {
                         ].map((item, i) => (
                           <li key={i} className="flex items-start gap-5 px-8 py-5">
                             <span className="text-[#F0EDE8]/20 font-mono text-[10px] shrink-0 mt-[3px]">0{i + 1}</span>
-                            <p className="text-sm font-mono text-[#F0EDE8]/40 leading-relaxed line-through decoration-[#F0EDE8]/20">{item}</p>
+                            <p className="text-sm font-mono text-[#F0EDE8]/40 leading-relaxed">{item}</p>
                           </li>
                         ))}
                       </ul>
