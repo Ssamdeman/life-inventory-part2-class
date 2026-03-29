@@ -196,7 +196,7 @@ export default function Home() {
               { title: "Team & Proposal", icon: FileText, status: "Completed", active: true },
               { title: "User Research", icon: Search, status: "View Research", active: true, href: "https://docs.google.com/document/d/1ijwiZ2esJcOggPSCCBuAet3GCP76u_MSNPaDiXk81OE/edit?usp=sharing", newTab: true },
               { title: "Prototypes", icon: Layout, status: "View Prototypes", active: true, href: "/phase3" },
-              { title: "Implementation", icon: Shield, status: "Coming Soon", active: false }
+              { title: "Paper Prototyping", icon: Shield, status: "View Phase 04", active: true, href: "/phase4" }
             ].map((item, i) => {
               const CardContent = (
                 <motion.div
