@@ -196,7 +196,9 @@ export default function Home() {
               { title: "Team & Proposal", icon: FileText, status: "Completed", active: true },
               { title: "User Research", icon: Search, status: "View Research", active: true, href: "https://docs.google.com/document/d/1ijwiZ2esJcOggPSCCBuAet3GCP76u_MSNPaDiXk81OE/edit?usp=sharing", newTab: true },
               { title: "Prototypes", icon: Layout, status: "View Prototypes", active: true, href: "/phase3" },
-              { title: "Paper Prototyping", icon: Shield, status: "View Phase 04", active: true, href: "/phase4" }
+              { title: "Paper Prototyping", icon: Shield, status: "View Phase 04", active: true, href: "/phase4" },
+              { title: "Final Implementation", icon: Database, status: "View Final Site", active: true, href: "/assets/phase5/life_inventory_final_v3 (2).html", newTab: true },
+              { title: "React MVP", icon: Box, status: "View MVP", active: true, href: "/phase6" }
             ].map((item, i) => {
               const CardContent = (
                 <motion.div

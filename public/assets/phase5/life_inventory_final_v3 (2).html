@@ -1,0 +1,529 @@
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500;600&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--cream:#F6F1E9;--forest:#1C3829;--gold:#B8965A;--gold-ll:#FAF5EC;--ink:#0E1F14;--mist:#8A9E92;--border:#D8CFBE;--white:#FFFFFF;--danger:#C0392B}
+.wrap{display:flex;flex-direction:column;align-items:center;padding:1.5rem 1rem;gap:1.5rem;font-family:'DM Sans',sans-serif}
+.tnav-row{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+.tnav{padding:6px 14px;border-radius:4px;border:1px solid var(--border);background:var(--white);font-family:'DM Mono',monospace;font-size:11px;cursor:pointer;color:var(--mist);letter-spacing:.5px;user-select:none}
+.tnav.on{background:var(--forest);color:var(--cream);border-color:var(--forest)}
+.phone-shell{width:290px;background:var(--cream);border-radius:36px;border:1.5px solid var(--border);overflow:hidden;box-shadow:0 20px 60px rgba(14,31,20,.12)}
+.sbar{padding:12px 22px 4px;display:flex;justify-content:space-between;font-family:'DM Mono',monospace;font-size:10px;font-weight:500;color:var(--ink);background:var(--cream)}
+.scr{min-height:500px;padding:0 20px 22px;flex-direction:column;display:none;background:var(--cream)}
+.scr.on{display:flex;animation:fadeIn .2s ease}
+@keyframes fadeIn{from{opacity:.4;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+.hdr{display:flex;justify-content:space-between;align-items:center;padding:10px 0 14px;border-bottom:1px solid var(--border);margin-bottom:14px}
+.htitle{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--ink)}
+.avatar{width:34px;height:34px;border-radius:50%;background:var(--forest);display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:11px;font-weight:500;color:var(--cream);cursor:pointer;user-select:none}
+.srch-wrap{position:relative;margin-bottom:14px}
+.srch{border-radius:8px;padding:9px 36px 9px 13px;display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer;user-select:none;border:1px solid var(--border);background:var(--white);color:var(--mist)}
+.srch.active{background:var(--gold-ll);border:1.5px solid var(--gold);color:var(--ink);font-weight:500}
+.mic-btn{position:absolute;right:10px;top:50%;transform:translateY(-50%);width:24px;height:24px;border-radius:50%;background:var(--forest);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:11px;user-select:none}
+.slbl{font-family:'DM Mono',monospace;font-size:9px;font-weight:500;color:var(--mist);letter-spacing:1.2px;text-transform:uppercase;margin-bottom:10px}
+.ccard{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:12px 14px;display:flex;align-items:center;gap:12px;margin-bottom:8px;cursor:pointer;user-select:none;transition:.15s}
+.ccard:active{transform:scale(.99)}
+.cico{width:36px;height:36px;border-radius:8px;background:var(--cream);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.cname{font-size:13px;font-weight:500;color:var(--ink)}
+.ccnt{font-family:'DM Mono',monospace;font-size:10px;color:var(--mist)}
+.fab{width:48px;height:48px;border-radius:50%;background:var(--forest);color:var(--cream);font-size:24px;display:flex;align-items:center;justify-content:center;cursor:pointer;align-self:flex-end;margin-top:auto;border:none;user-select:none;box-shadow:0 4px 14px rgba(28,56,41,.3)}
+.back{display:flex;align-items:center;gap:5px;font-size:12px;font-family:'DM Mono',monospace;color:var(--mist);margin-bottom:14px;cursor:pointer;background:none;border:none;padding:0;user-select:none}
+.camv{background:#0E1F14;border-radius:10px;height:180px;display:flex;align-items:center;justify-content:center;margin-bottom:16px;position:relative;overflow:hidden;cursor:pointer}
+.corner{position:absolute;width:24px;height:24px;border-color:rgba(246,241,233,.7);border-style:solid;border-width:0}
+.corner.tl{top:14px;left:14px;border-top-width:2px;border-left-width:2px}
+.corner.tr{top:14px;right:14px;border-top-width:2px;border-right-width:2px}
+.corner.bl{bottom:14px;left:14px;border-bottom-width:2px;border-left-width:2px}
+.corner.br{bottom:14px;right:14px;border-bottom-width:2px;border-right-width:2px}
+.chint{color:rgba(246,241,233,.5);font-size:11px;font-family:'DM Mono',monospace;position:absolute;bottom:12px}
+.capbtn{width:54px;height:54px;border-radius:50%;background:var(--cream);border:4px solid rgba(246,241,233,.3);cursor:pointer;align-self:center;margin-bottom:14px}
+.fl{font-family:'DM Mono',monospace;font-size:9px;font-weight:500;color:var(--mist);letter-spacing:1px;text-transform:uppercase;margin-bottom:5px}
+input[type=text],input[type=email],input[type=password]{width:100%;border-radius:8px;padding:10px 13px;font-size:13px;margin-bottom:12px;font-family:'DM Sans',sans-serif;outline:none;border:1px solid var(--border);background:var(--white);color:var(--ink);transition:.2s}
+input:focus{border-color:var(--forest)}
+input.prefilled{background:var(--gold-ll);border-color:var(--gold)}
+input.prefilled:focus{background:var(--white);border-color:var(--forest)}
+select{width:100%;border-radius:8px;padding:10px 13px;font-size:13px;margin-bottom:12px;font-family:'DM Sans',sans-serif;outline:none;border:1px solid var(--border);background:var(--white);color:var(--ink);cursor:pointer;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238A9E92' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 13px center;padding-right:36px}
+select:focus{border-color:var(--forest)}
+.pup{background:var(--white);border:1px dashed var(--border);border-radius:8px;padding:12px;text-align:center;font-size:12px;color:var(--mist);margin-bottom:12px}
+.tags-area{background:var(--white);border:1px solid var(--border);border-radius:8px;padding:8px 10px;margin-bottom:12px;display:flex;flex-wrap:wrap;gap:6px;align-items:center;min-height:42px;cursor:text}
+.tags-area:focus-within{border-color:var(--forest)}
+.tag{background:var(--gold-ll);color:var(--gold);border:1px solid var(--gold);border-radius:4px;padding:3px 7px;font-size:11px;font-weight:500;font-family:'DM Mono',monospace;display:flex;align-items:center;gap:4px}
+.tag-remove{cursor:pointer;opacity:.6;font-size:13px;line-height:1}
+.tag-input{border:none;outline:none;font-size:12px;font-family:'DM Mono',monospace;color:var(--ink);background:transparent;min-width:80px;padding:2px 0}
+.bp{width:100%;background:var(--forest);color:var(--cream);border:none;border-radius:8px;padding:13px;font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;letter-spacing:.3px;transition:.15s;user-select:none;margin-top:4px}
+.bp:active{background:var(--ink)}
+.bs{width:100%;background:var(--white);color:var(--ink);border:1px solid var(--border);border-radius:8px;padding:11px;font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif;margin-top:8px;user-select:none}
+.toast{display:none;background:var(--forest);color:var(--cream);border-radius:8px;padding:10px 14px;font-size:12px;font-family:'DM Mono',monospace;text-align:center;margin-bottom:10px;letter-spacing:.3px}
+.toast.on{display:block;animation:fadeIn .3s ease}
+.ccirc{width:64px;height:64px;border-radius:50%;background:var(--forest);display:flex;align-items:center;justify-content:center;color:var(--cream);font-size:26px;align-self:center;margin:20px auto 12px;font-weight:700}
+.ctit{font-family:'Playfair Display',serif;font-size:22px;text-align:center;color:var(--ink);margin-bottom:4px}
+.csub{font-size:12px;color:var(--mist);text-align:center;margin-bottom:18px;font-family:'DM Mono',monospace}
+.iprev{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:12px;display:flex;gap:10px;align-items:center;margin-bottom:16px}
+.ith{width:38px;height:38px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
+.iname{font-size:13px;font-weight:500;color:var(--ink)}
+.iloc{font-family:'DM Mono',monospace;font-size:10px;color:var(--mist);margin-top:1px}
+.chips{display:flex;gap:6px;margin-bottom:14px}
+.chip{padding:5px 12px;border-radius:4px;font-size:11px;font-weight:500;cursor:pointer;border:1px solid var(--border);background:var(--white);color:var(--mist);font-family:'DM Mono',monospace;user-select:none;transition:.15s}
+.chip.on{background:var(--forest);color:var(--cream);border-color:var(--forest)}
+.ri{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:11px 13px;display:flex;align-items:center;gap:10px;margin-bottom:8px;cursor:pointer;user-select:none}
+.rname{font-size:13px;font-weight:500;color:var(--ink);margin-bottom:1px}
+.rloc{font-family:'DM Mono',monospace;font-size:10px;color:var(--mist)}
+.rqty{font-family:'DM Mono',monospace;font-size:11px;font-weight:500;color:var(--forest);background:var(--gold-ll);border:1px solid var(--gold);padding:2px 8px;border-radius:4px;white-space:nowrap;margin-left:auto}
+.dphoto{background:var(--gold-ll);border-radius:10px;height:130px;display:flex;align-items:center;justify-content:center;font-size:52px;margin-bottom:14px;border:1px solid var(--gold)}
+.dtitle{font-family:'Playfair Display',serif;font-size:22px;color:var(--ink);margin-bottom:3px}
+.dmeta{font-family:'DM Mono',monospace;font-size:10px;color:var(--mist);margin-bottom:14px}
+.drow{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border);font-size:13px}
+.drow span:first-child{color:var(--mist);font-family:'DM Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.8px;align-self:center}
+.drow span:last-child{font-weight:500;color:var(--ink)}
+.fbtns{display:flex;gap:8px;margin-top:14px}
+.byes{flex:1;padding:12px;border-radius:8px;font-size:13px;font-weight:600;background:var(--forest);color:var(--cream);border:none;cursor:pointer;font-family:'DM Sans',sans-serif}
+.bno{flex:1;padding:12px;border-radius:8px;font-size:13px;background:var(--white);color:var(--ink);border:1px solid var(--border);cursor:pointer;font-family:'DM Sans',sans-serif}
+.scard{background:var(--gold-ll);border:1.5px solid var(--gold);border-radius:10px;padding:14px;margin-bottom:14px}
+.sname{font-family:'Playfair Display',serif;font-size:18px;color:var(--ink);margin-bottom:3px}
+.smeta{font-family:'DM Mono',monospace;font-size:10px;color:var(--gold)}
+.step{display:flex;align-items:center;justify-content:center;gap:14px;background:var(--white);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:14px}
+.sbtn{width:36px;height:36px;border-radius:50%;background:var(--cream);border:1px solid var(--border);font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--forest);font-weight:600;user-select:none}
+.sval{font-family:'Playfair Display',serif;font-size:30px;min-width:40px;text-align:center;color:var(--ink)}
+.sunit{font-family:'DM Mono',monospace;font-size:10px;color:var(--mist);text-align:center}
+.pavatar{width:68px;height:68px;border-radius:50%;background:var(--forest);display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:18px;font-weight:500;color:var(--cream);align-self:center;margin:16px auto 10px}
+.pname{font-family:'Playfair Display',serif;font-size:20px;text-align:center;color:var(--ink);margin-bottom:2px}
+.pemail{font-family:'DM Mono',monospace;font-size:10px;color:var(--mist);text-align:center;margin-bottom:20px}
+.prow{display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px solid var(--border);font-size:13px;cursor:pointer}
+.prow span:first-child{color:var(--ink)}
+.prow span:last-child{font-family:'DM Mono',monospace;font-size:10px;color:var(--mist)}
+.logout{width:100%;background:transparent;color:var(--danger);border:1px solid rgba(192,57,43,.25);border-radius:8px;padding:11px;font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;margin-top:auto}
+.logo-area{display:flex;flex-direction:column;align-items:center;padding:20px 0 16px}
+.app-mark{width:52px;height:52px;border-radius:14px;background:var(--forest);display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:10px}
+.app-wordmark{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--ink)}
+.link-row{text-align:center;font-family:'DM Mono',monospace;font-size:10px;color:var(--mist);margin-top:10px;cursor:pointer;user-select:none}
+.link-row span{color:var(--forest);font-weight:500}
+.dots{display:flex;gap:5px;justify-content:center;padding-top:8px}
+.dot{width:5px;height:5px;border-radius:50%;background:var(--border)}
+.dot.on{background:var(--forest)}
+.rs{display:none}.rs.on{display:block}
+.empty{text-align:center;padding:24px 0;font-family:'DM Mono',monospace;font-size:11px;color:var(--mist)}
+.saved-items-list{margin-top:10px}
+.saved-item-row{background:var(--white);border:1px solid var(--border);border-radius:8px;padding:9px 12px;display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:12px;color:var(--ink)}
+.saved-item-room{font-family:'DM Mono',monospace;font-size:10px;color:var(--mist);margin-left:auto}
+@keyframes bar{0%,100%{transform:scaleY(.5)}50%{transform:scaleY(1)}}
+@keyframes pulse2{0%,100%{box-shadow:0 0 0 0 rgba(192,57,43,.3)}50%{box-shadow:0 0 0 12px rgba(192,57,43,0)}}
+@keyframes countPop{0%{transform:scale(1)}50%{transform:scale(1.3)}100%{transform:scale(1)}}
+.pop{animation:countPop .3s ease}
+</style>
+
+<div class="wrap">
+<div class="tnav-row">
+  <div class="tnav on" id="tn0">Login</div>
+  <div class="tnav" id="tn1">Task 1</div>
+  <div class="tnav" id="tn2">Task 2</div>
+  <div class="tnav" id="tn3">Task 3</div>
+</div>
+
+<div class="phone-shell">
+<div class="sbar"><span>9:41</span><span>●●● ▮</span></div>
+
+<!-- LOGIN -->
+<div class="scr on" id="s-login">
+  <div class="logo-area">
+    <div class="app-mark">📦</div>
+    <div class="app-wordmark">Life Inventory</div>
+  </div>
+  <div class="toast" id="signup-toast">✓ Account created! Please log in.</div>
+  <div class="fl">Email</div>
+  <input type="email" class="prefilled" value="sonal@umb.edu">
+  <div class="fl">Password</div>
+  <input type="password" class="prefilled" value="password123">
+  <button class="bp" id="loginbtn">Log In</button>
+  <div class="link-row" id="go-signup">No account? <span>Sign Up →</span></div>
+</div>
+
+<!-- SIGN UP -->
+<div class="scr" id="s-signup">
+  <div class="logo-area" style="padding:10px 0 10px">
+    <div class="app-mark">📦</div>
+    <div class="app-wordmark">Create Account</div>
+  </div>
+  <div class="fl">Full Name</div>
+  <input type="text" class="prefilled" value="Sonal Doiphode">
+  <div class="fl">Email</div>
+  <input type="email" class="prefilled" value="sonal@umb.edu">
+  <div class="fl">Password</div>
+  <input type="password" placeholder="Create password">
+  <div class="fl">Confirm Password</div>
+  <input type="password" placeholder="Confirm password">
+  <button class="bp" id="signupbtn">Create Account</button>
+  <div class="link-row" id="go-login">Have an account? <span>Log In →</span></div>
+</div>
+
+<!-- HOME -->
+<div class="scr" id="s1">
+  <div class="hdr">
+    <div class="htitle">My Inventory</div>
+    <div class="avatar" id="avbtn">SD</div>
+  </div>
+  <div class="srch-wrap">
+    <div class="srch" id="srch1"><span style="opacity:.6;font-size:13px">⌕</span><span>Search items...</span></div>
+    <div class="mic-btn" id="home-mic">🎤</div>
+  </div>
+  <div class="slbl">Collections</div>
+  <div class="ccard" id="cc1"><div class="cico">⚡</div><div><div class="cname">Electronics</div><div class="ccnt" id="cnt-electronics">08 items</div></div><span style="color:var(--mist);margin-left:auto;font-size:16px">›</span></div>
+  <div class="ccard" id="cc2"><div class="cico">🛁</div><div><div class="cname">Bathroom</div><div class="ccnt" id="cnt-bathroom">12 items</div></div><span style="color:var(--mist);margin-left:auto;font-size:16px">›</span></div>
+  <div class="ccard" id="cc3"><div class="cico">🍳</div><div><div class="cname">Kitchen</div><div class="ccnt" id="cnt-kitchen">05 items</div></div><span style="color:var(--mist);margin-left:auto;font-size:16px">›</span></div>
+  <div class="ccard" id="cc4" style="display:none"><div class="cico">🛋️</div><div><div class="cname">Living Room</div><div class="ccnt" id="cnt-living-room">00 items</div></div><span style="color:var(--mist);margin-left:auto;font-size:16px">›</span></div>
+  <div class="ccard" id="cc5" style="display:none"><div class="cico">💼</div><div><div class="cname">Office</div><div class="ccnt" id="cnt-office">00 items</div></div><span style="color:var(--mist);margin-left:auto;font-size:16px">›</span></div>
+  <div class="ccard" id="cc6" style="display:none"><div class="cico">🔧</div><div><div class="cname">Garage</div><div class="ccnt" id="cnt-garage">00 items</div></div><span style="color:var(--mist);margin-left:auto;font-size:16px">›</span></div>
+  <div class="fab" id="fabadd">+</div>
+</div>
+
+<!-- PROFILE -->
+<div class="scr" id="s-profile">
+  <button class="back" id="b-profile">← back</button>
+  <div class="pavatar">SD</div>
+  <div class="pname">Sonal Doiphode</div>
+  <div class="pemail">sonal@umb.edu</div>
+  <div class="slbl">Account</div>
+  <div class="prow"><span>Full Name</span><span>Sonal Doiphode ›</span></div>
+  <div class="prow"><span>Email</span><span>sonal@umb.edu ›</span></div>
+  <div class="prow"><span>Password</span><span>Change ›</span></div>
+  <div class="slbl" style="margin-top:14px">Preferences</div>
+  <div class="prow"><span>Notifications</span><span>On ›</span></div>
+  <div class="prow"><span>Dark Mode</span><span>Off ›</span></div>
+  <button class="logout" id="logoutbtn">Log Out</button>
+</div>
+
+<!-- VOICE -->
+<div class="scr" id="s-voice">
+  <button class="back" id="b-voice">← cancel</button>
+  <div style="text-align:center;margin-top:8px;margin-bottom:16px">
+    <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--mist);letter-spacing:.8px;text-transform:uppercase;margin-bottom:4px">Voice Command</div>
+    <div style="font-family:'Playfair Display',serif;font-size:14px;color:var(--ink);font-style:italic">"Hey, where is my charger?"</div>
+  </div>
+  <div style="display:flex;flex-direction:column;align-items:center;gap:12px;padding:16px 0">
+    <div style="width:64px;height:64px;border-radius:50%;background:var(--danger);display:flex;align-items:center;justify-content:center;font-size:24px;animation:pulse2 1.2s infinite">🎤</div>
+    <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--mist);letter-spacing:.5px">listening...</div>
+    <div style="display:flex;gap:4px;align-items:center">
+      <div style="width:4px;height:12px;background:var(--forest);border-radius:2px;animation:bar 1s ease infinite 0s"></div>
+      <div style="width:4px;height:20px;background:var(--forest);border-radius:2px;animation:bar 1s ease infinite .1s"></div>
+      <div style="width:4px;height:8px;background:var(--forest);border-radius:2px;animation:bar 1s ease infinite .2s"></div>
+      <div style="width:4px;height:24px;background:var(--forest);border-radius:2px;animation:bar 1s ease infinite .3s"></div>
+      <div style="width:4px;height:14px;background:var(--forest);border-radius:2px;animation:bar 1s ease infinite .4s"></div>
+    </div>
+  </div>
+  <div style="background:var(--white);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:12px">
+    <div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--mist);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">Hearing</div>
+    <div style="font-family:'Playfair Display',serif;font-size:16px;color:var(--ink);font-style:italic">"where is my charger"</div>
+  </div>
+  <button class="bp" id="voice-search-btn">Search →</button>
+</div>
+
+<!-- SEARCH RESULT -->
+<div class="scr" id="s1b">
+  <button class="back" id="b1b">← back</button>
+  <div class="srch active"><span style="font-size:13px">⌕</span><span>charger</span></div>
+  <div class="slbl">Results</div>
+  <div class="ri" id="sr1"><div class="ith" style="background:var(--gold-ll)">⚡</div><div><div class="rname">Laptop Charger</div><div class="rloc">bedroom · desk</div></div><span class="rqty">×1</span></div>
+  <div class="ri" id="sr2"><div class="ith" style="background:#FFF3E0">🔌</div><div><div class="rname">USB-C Cable</div><div class="rloc">bedroom · bag</div></div><span class="rqty">×3</span></div>
+  <div id="dynamic-results"></div>
+</div>
+
+<!-- CAMERA -->
+<div class="scr" id="s2">
+  <button class="back" id="b2">← back</button>
+  <div class="slbl">Take Photo</div>
+  <div class="camv" id="camclick">
+    <div class="corner tl"></div><div class="corner tr"></div>
+    <div class="corner bl"></div><div class="corner br"></div>
+    <span class="chint">tap anywhere to capture</span>
+  </div>
+  <div class="capbtn" id="capbtn"></div>
+  <button class="bs" id="skipbtn">skip — add photo later</button>
+</div>
+
+<!-- FORM -->
+<div class="scr" id="s3">
+  <button class="back" id="b3">← back</button>
+  <div class="slbl">Add New Item</div>
+  <div class="fl">Item Name</div>
+  <input type="text" id="item-name-input" placeholder="e.g. Laptop Charger">
+  <div class="fl">Room</div>
+  <select id="room-select">
+    <option value="">Select a room...</option>
+    <option value="electronics">Electronics</option>
+    <option value="bathroom">Bathroom</option>
+    <option value="living-room">Living Room</option>
+    <option value="kitchen">Kitchen</option>
+    <option value="office">Office</option>
+    <option value="garage">Garage</option>
+  </select>
+  <div class="fl">Location Photo <span style="font-weight:300;letter-spacing:0">(optional)</span></div>
+  <div class="pup">tap to add location photo</div>
+  <div class="fl">Labels</div>
+  <div class="tags-area" id="tags-area" onclick="focusTagInput()">
+    <input type="text" class="tag-input" id="tag-input" placeholder="add label..." onkeydown="handleTagKey(event)">
+  </div>
+  <div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--mist);margin-top:-8px;margin-bottom:10px;letter-spacing:.3px">press Enter to add</div>
+  <div class="fl">Quantity</div>
+  <input type="text" id="qty-input" value="1">
+  <button class="bp" id="savebtn">Save Item</button>
+</div>
+
+<!-- SAVED -->
+<div class="scr" id="s4">
+  <div class="ccirc">✓</div>
+  <div class="ctit">Item Saved</div>
+  <div class="csub" id="saved-subtitle">added to your inventory</div>
+  <div class="iprev" id="saved-preview">
+    <div class="ith" style="background:var(--gold-ll)" id="saved-icon">📦</div>
+    <div><div class="iname" id="saved-name">Item</div><div class="iloc" id="saved-loc">-</div></div>
+  </div>
+  <button class="bp" id="s4home">Back to Home</button>
+</div>
+
+<!-- FIND -->
+<div class="scr" id="s5">
+  <div class="hdr"><div class="htitle">Find Item</div></div>
+  <div class="srch-wrap">
+    <div class="srch active"><span style="font-size:13px">⌕</span><span>charger</span></div>
+    <div class="mic-btn" id="find-mic">🎤</div>
+  </div>
+  <div class="chips">
+    <div class="chip on" id="ca" onclick="filterR('all')">All</div>
+    <div class="chip" id="cb" onclick="filterR('bed')">Bedroom</div>
+    <div class="chip" id="cc" onclick="filterR('kit')">Kitchen</div>
+  </div>
+  <div class="slbl" id="rct">3 Results</div>
+  <div class="rs on" id="ra">
+    <div class="ri" id="r1"><div class="ith" style="background:var(--gold-ll)">⚡</div><div><div class="rname">Laptop Charger</div><div class="rloc">bedroom · desk</div></div><span class="rqty">×1</span></div>
+    <div class="ri" id="r2"><div class="ith" style="background:#FFF3E0">🔌</div><div><div class="rname">USB-C Cable</div><div class="rloc">bedroom · bag</div></div><span class="rqty">×3</span></div>
+    <div class="ri" id="r3"><div class="ith" style="background:#F3E5F5">🎧</div><div><div class="rname">Earphones</div><div class="rloc">bedroom · drawer</div></div><span class="rqty">×2</span></div>
+  </div>
+  <div class="rs" id="rb">
+    <div class="ri" id="r4"><div class="ith" style="background:var(--gold-ll)">⚡</div><div><div class="rname">Laptop Charger</div><div class="rloc">bedroom · desk</div></div><span class="rqty">×1</span></div>
+    <div class="ri" id="r5"><div class="ith" style="background:#FFF3E0">🔌</div><div><div class="rname">USB-C Cable</div><div class="rloc">bedroom · bag</div></div><span class="rqty">×3</span></div>
+    <div class="ri" id="r6"><div class="ith" style="background:#F3E5F5">🎧</div><div><div class="rname">Earphones</div><div class="rloc">bedroom · drawer</div></div><span class="rqty">×2</span></div>
+  </div>
+  <div class="rs" id="rc"><div class="empty">no chargers found in kitchen</div></div>
+</div>
+
+<!-- ITEM DETAIL -->
+<div class="scr" id="s6">
+  <button class="back" id="b6">← results</button>
+  <div class="dphoto">⚡</div>
+  <div class="dtitle">Laptop Charger</div>
+  <div class="dmeta">added 2 weeks ago · #electronics</div>
+  <div class="drow"><span>Room</span><span>Bedroom</span></div>
+  <div class="drow"><span>Spot</span><span>Desk drawer</span></div>
+  <div class="drow"><span>Qty</span><span>1</span></div>
+  <div class="fbtns">
+    <button class="byes" id="foundbtn">✓ Found it!</button>
+    <button class="bno" id="notfoundbtn">Not found</button>
+  </div>
+</div>
+
+<!-- FOUND -->
+<div class="scr" id="s7">
+  <div class="ccirc">🎉</div>
+  <div class="ctit">Found It</div>
+  <div class="csub">bedroom · desk drawer</div>
+  <div class="iprev">
+    <div class="ith" style="background:var(--gold-ll)">⚡</div>
+    <div><div class="iname">Laptop Charger</div><div class="iloc">bedroom · desk drawer</div></div>
+  </div>
+  <button class="bp" id="s7s">Back to Search</button>
+  <button class="bs" id="s7h">Back to Home</button>
+</div>
+
+<!-- STOCK -->
+<div class="scr" id="s8">
+  <div class="hdr"><div class="htitle">Quick Check</div></div>
+  <div class="srch-wrap">
+    <div class="srch active"><span style="font-size:13px">⌕</span><span>toilet paper</span></div>
+    <div class="mic-btn" id="stock-mic">🎤</div>
+  </div>
+  <div class="chips">
+    <div class="chip on" id="sc-all" onclick="filterS('all')">All Rooms</div>
+    <div class="chip" id="sc-kit" onclick="filterS('kit')">Kitchen</div>
+    <div class="chip" id="sc-bat" onclick="filterS('bat')">Bathroom</div>
+  </div>
+  <div class="slbl" id="sct">1 Result</div>
+  <div class="rs on" id="sa"><div class="ri" id="stk1" style="border-color:var(--gold)"><div class="ith" style="background:var(--gold-ll)">🧻</div><div><div class="rname">Toilet Paper</div><div class="rloc">bathroom · shelf</div></div><span class="rqty">×8</span></div></div>
+  <div class="rs" id="sk"><div class="empty">no toilet paper in kitchen</div></div>
+  <div class="rs" id="sb"><div class="ri" id="stk2" style="border-color:var(--gold)"><div class="ith" style="background:var(--gold-ll)">🧻</div><div><div class="rname">Toilet Paper</div><div class="rloc">bathroom · shelf</div></div><span class="rqty">×8</span></div></div>
+</div>
+
+<!-- STOCK DETAIL -->
+<div class="scr" id="s9">
+  <button class="back" id="b9">← back</button>
+  <div class="scard"><div class="sname">Toilet Paper</div><div class="smeta">bathroom · shelf · last bought 2 wks ago</div></div>
+  <div class="drow"><span>Quantity</span><span style="color:var(--forest);font-weight:600">8 rolls</span></div>
+  <div class="drow"><span>Last Bought</span><span>2 weeks ago</span></div>
+  <div class="drow"><span>Location</span><span>Bathroom shelf</span></div>
+  <button class="bp" id="updqbtn" style="margin-top:16px">Update Quantity</button>
+  <button class="bs" id="s9h">Back to Home</button>
+</div>
+
+<!-- UPDATE -->
+<div class="scr" id="s10">
+  <button class="back" id="b10">← back</button>
+  <div class="slbl" style="text-align:center;margin-bottom:6px">Update Stock</div>
+  <div style="text-align:center;margin-bottom:16px">
+    <div style="font-family:'Playfair Display',serif;font-size:19px;color:var(--ink);margin-bottom:2px">Toilet Paper</div>
+    <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--mist)">bathroom · shelf</div>
+  </div>
+  <div class="step">
+    <div class="sbtn" id="minus">−</div>
+    <div><div class="sval" id="qv">8</div><div class="sunit">rolls</div></div>
+    <div class="sbtn" id="plus">+</div>
+  </div>
+  <button class="bp" id="updbtn">Update</button>
+  <button class="bs" id="s10h">Back to Home</button>
+</div>
+</div>
+
+<div class="dots" id="dots"></div>
+</div>
+
+<script>
+let qty=8,curTask=0,voiceFrom='s1';
+const tmap={0:['s-login','s-signup'],1:['s1','s2','s3','s4'],2:['s5','s6','s7'],3:['s8','s9','s10']};
+
+// Collection counts — base counts
+const counts={electronics:8,bathroom:12,kitchen:5,'living-room':0,office:0,garage:0};
+const roomIcons={electronics:'⚡',bathroom:'🛁',kitchen:'🍳','living-room':'🛋️',office:'💼',garage:'🔧'};
+const cardMap={electronics:'cc1',bathroom:'cc2',kitchen:'cc3','living-room':'cc4',office:'cc5',garage:'cc6'};
+
+function pad(n){return String(n).padStart(2,'0')}
+
+function updateCollectionCount(room){
+  counts[room]=(counts[room]||0)+1;
+  const cntEl=document.getElementById('cnt-'+room);
+  if(cntEl){
+    cntEl.textContent=pad(counts[room])+' items';
+    cntEl.classList.remove('pop');
+    void cntEl.offsetWidth;
+    cntEl.classList.add('pop');
+  }
+  // Show card if it was hidden
+  const card=document.getElementById(cardMap[room]);
+  if(card)card.style.display='flex';
+}
+
+function show(id){
+  document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));
+  const el=document.getElementById(id);
+  if(el)el.classList.add('on');
+  const sc=tmap[curTask]||[];
+  const idx=sc.indexOf(id);
+  document.getElementById('dots').innerHTML=sc.map((_,i)=>'<div class="dot'+(i===idx?' on':'')+'"></div>').join('');
+}
+
+function setTask(t){
+  curTask=t;
+  document.querySelectorAll('.tnav').forEach((el,i)=>el.classList.toggle('on',i===t));
+  show(tmap[t][0]);
+}
+
+function filterR(f){
+  ['ra','rb','rc'].forEach((k,i)=>document.getElementById(k).classList.toggle('on',['all','bed','kit'][i]===f));
+  ['ca','cb','cc'].forEach((k,i)=>document.getElementById(k).classList.toggle('on',['all','bed','kit'][i]===f));
+  document.getElementById('rct').textContent=f==='kit'?'0 Results':'3 Results';
+}
+
+function filterS(f){
+  ['sa','sk','sb'].forEach((k,i)=>document.getElementById(k).classList.toggle('on',['all','kit','bat'][i]===f));
+  ['sc-all','sc-kit','sc-bat'].forEach((k,i)=>document.getElementById(k).classList.toggle('on',['all','kit','bat'][i]===f));
+  document.getElementById('sct').textContent=f==='kit'?'0 Results':'1 Result';
+}
+
+function focusTagInput(){document.getElementById('tag-input').focus()}
+let tagCount=0;
+function handleTagKey(e){
+  const inp=e.target;
+  const val=inp.value.trim().replace(/,$/,'').replace(/^#/,'');
+  if((e.key==='Enter'||e.key===',')&&val){
+    e.preventDefault();
+    tagCount++;
+    const id='tag-'+tagCount;
+    const tag=document.createElement('div');
+    tag.className='tag';tag.id=id;
+    tag.innerHTML='#'+val+' <span class="tag-remove" onclick="removeTag(\''+id+'\')">×</span>';
+    document.getElementById('tags-area').insertBefore(tag,inp);
+    inp.value='';
+  }
+}
+function removeTag(id){const el=document.getElementById(id);if(el)el.remove()}
+function openVoice(from){voiceFrom=from;show('s-voice')}
+
+document.getElementById('tn0').onclick=()=>setTask(0);
+document.getElementById('tn1').onclick=()=>setTask(1);
+document.getElementById('tn2').onclick=()=>setTask(2);
+document.getElementById('tn3').onclick=()=>setTask(3);
+
+document.getElementById('signupbtn').onclick=()=>{document.getElementById('signup-toast').classList.add('on');show('s-login');};
+document.getElementById('loginbtn').onclick=()=>{document.getElementById('signup-toast').classList.remove('on');curTask=1;setTask(1);};
+document.getElementById('go-signup').onclick=()=>{document.getElementById('signup-toast').classList.remove('on');show('s-signup');};
+document.getElementById('go-login').onclick=()=>show('s-login');
+document.getElementById('logoutbtn').onclick=()=>{curTask=0;setTask(0)};
+document.getElementById('avbtn').onclick=()=>show('s-profile');
+document.getElementById('b-profile').onclick=()=>show('s1');
+
+document.getElementById('home-mic').onclick=()=>openVoice('s1');
+document.getElementById('find-mic').onclick=()=>openVoice('s5');
+document.getElementById('stock-mic').onclick=()=>openVoice('s8');
+document.getElementById('b-voice').onclick=()=>show(voiceFrom);
+document.getElementById('voice-search-btn').onclick=()=>show('s1b');
+
+document.getElementById('srch1').onclick=()=>show('s1b');
+document.getElementById('b1b').onclick=()=>show('s1');
+['sr1','sr2'].forEach(id=>{const e=document.getElementById(id);if(e)e.onclick=()=>show('s6')});
+
+document.getElementById('fabadd').onclick=()=>{
+  // Clear form
+  document.getElementById('item-name-input').value='';
+  document.getElementById('room-select').value='';
+  document.getElementById('qty-input').value='1';
+  show('s2');
+};
+['cc1','cc2','cc3','cc4','cc5','cc6'].forEach(id=>{
+  const e=document.getElementById(id);
+  if(e)e.onclick=()=>show('s2');
+});
+document.getElementById('camclick').onclick=()=>show('s3');
+document.getElementById('capbtn').onclick=()=>show('s3');
+document.getElementById('skipbtn').onclick=()=>show('s3');
+document.getElementById('b2').onclick=()=>show('s1');
+document.getElementById('b3').onclick=()=>show('s2');
+
+// SAVE ITEM — update collection count!
+document.getElementById('savebtn').onclick=()=>{
+  const name=document.getElementById('item-name-input').value.trim()||'New Item';
+  const room=document.getElementById('room-select').value;
+  const icon=roomIcons[room]||'📦';
+  // Update confirmation screen
+  document.getElementById('saved-name').textContent=name;
+  document.getElementById('saved-loc').textContent=room?room.replace('-',' '):'your inventory';
+  document.getElementById('saved-icon').textContent=icon;
+  // Update collection count
+  if(room) updateCollectionCount(room);
+  show('s4');
+};
+
+document.getElementById('s4home').onclick=()=>show('s1');
+
+['r1','r2','r3','r4','r5','r6'].forEach(id=>{const e=document.getElementById(id);if(e)e.onclick=()=>show('s6')});
+document.getElementById('b6').onclick=()=>show('s5');
+document.getElementById('foundbtn').onclick=()=>show('s7');
+document.getElementById('notfoundbtn').onclick=()=>show('s5');
+document.getElementById('s7s').onclick=()=>show('s5');
+document.getElementById('s7h').onclick=()=>{curTask=1;setTask(1)};
+
+['stk1','stk2'].forEach(id=>{const e=document.getElementById(id);if(e)e.onclick=()=>show('s9')});
+document.getElementById('b9').onclick=()=>show('s8');
+document.getElementById('s9h').onclick=()=>{curTask=1;setTask(1)};
+document.getElementById('updqbtn').onclick=()=>show('s10');
+document.getElementById('b10').onclick=()=>show('s9');
+document.getElementById('updbtn').onclick=()=>show('s8');
+document.getElementById('s10h').onclick=()=>{curTask=1;setTask(1)};
+document.getElementById('minus').onclick=()=>{qty=Math.max(0,qty-1);document.getElementById('qv').textContent=qty};
+document.getElementById('plus').onclick=()=>{qty++;document.getElementById('qv').textContent=qty};
+
+show('s-login');
+</script>
