@@ -10,6 +10,7 @@ const INITIAL_INVENTORY = [
     room: 'electronics', 
     spot: 'desk drawer', 
     qty: 1,
+    labels: ['essential', 'work'],
     createdAt: '2026-04-01T10:00:00Z',
     updatedAt: '2026-04-01T10:00:00Z'
   },
@@ -19,6 +20,7 @@ const INITIAL_INVENTORY = [
     room: 'bathroom', 
     spot: 'cabinet', 
     qty: 8,
+    labels: ['stock', 'daily'],
     createdAt: '2026-04-10T14:30:00Z',
     updatedAt: '2026-04-15T09:41:00Z'
   }
@@ -33,11 +35,15 @@ export default function Phase6Page() {
   const [selectedRoom, setSelectedRoom] = useState('electronics');
   const [itemSpot, setItemSpot] = useState('');
   const [quantity, setQuantity] = useState(1);
+  const [labels, setLabels] = useState<string[]>([]);
+  const [currentLabel, setCurrentLabel] = useState('');
 
   // Search State
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState('All');
   const [selectedItemForDetail, setSelectedItemForDetail] = useState<number | null>(null);
+  const [isEditingSpot, setIsEditingSpot] = useState(false);
+  const [editedSpot, setEditedSpot] = useState('');
 
   // Edit State
   const [selectedItemForUpdate, setSelectedItemForUpdate] = useState<number | null>(null);
@@ -46,7 +52,7 @@ export default function Phase6Page() {
   const [tempQty, setTempQty] = useState(0);
 
   // Determine if Nav should be hidden
-  const isNavHidden = ['camera', 'updateStock', 'itemDetail', 'foundSuccess'].includes(currentScreen);
+  const isNavHidden = ['camera', 'voiceSearch', 'updateStock', 'itemDetail', 'foundSuccess'].includes(currentScreen);
 
   const getCountByRoom = (room: string) => {
     return inventory.filter(item => item.room === room.toLowerCase()).length;
@@ -82,6 +88,7 @@ export default function Phase6Page() {
       room: selectedRoom.toLowerCase(),
       spot: itemSpot || 'not specified',
       qty: quantity,
+      labels: labels,
       createdAt: now,
       updatedAt: now
     };
@@ -93,6 +100,8 @@ export default function Phase6Page() {
     setSelectedRoom('electronics');
     setItemSpot('');
     setQuantity(1);
+    setLabels([]);
+    setCurrentLabel('');
     
     setCurrentScreen('home');
   };
@@ -123,6 +132,23 @@ export default function Phase6Page() {
     setCurrentScreen('home');
   };
 
+  const handleUpdateDetailSpot = () => {
+    if (selectedItemForDetail === null) return;
+    
+    const now = new Date().toISOString();
+    setInventory(inventory.map(item => 
+      item.id === selectedItemForDetail 
+        ? { 
+            ...item, 
+            spot: editedSpot,
+            updatedAt: now
+          } 
+        : item
+    ));
+    
+    setIsEditingSpot(false);
+  };
+
   const renderScreen = () => {
     switch (currentScreen) {
       case 'home':
@@ -131,7 +157,10 @@ export default function Phase6Page() {
             {/* Header */}
             <div className="flex justify-between items-center mb-10">
               <h1 className="text-4xl font-serif italic text-[#1C3829]">Collections</h1>
-              <div className="w-12 h-12 rounded-full bg-[#1C3829] flex items-center justify-center text-[#F6F1E9] text-sm font-medium shadow-md shadow-[#1C3829]/10 ring-4 ring-[#F6F1E9]">
+              <div 
+                onClick={() => setCurrentScreen('profile')}
+                className="w-12 h-12 rounded-full bg-[#1C3829] flex items-center justify-center text-[#F6F1E9] text-sm font-medium shadow-md shadow-[#1C3829]/10 ring-4 ring-[#F6F1E9] cursor-pointer hover:scale-105 active:scale-95 transition-all"
+              >
                 SD
               </div>
             </div>
@@ -293,6 +322,34 @@ export default function Phase6Page() {
               </div>
 
               <div className="space-y-3">
+                <label className="text-[10px] font-mono uppercase tracking-[0.2em] text-[#0E1F14]/40 ml-1">Labels / Hashtags</label>
+                <div className="flex flex-wrap gap-2 mb-2">
+                  {labels.map((tag, index) => (
+                    <span key={index} className="px-3 py-1 bg-[#1C3829]/5 border border-[#1C3829]/10 rounded-full text-[10px] font-mono text-[#1C3829] flex items-center gap-2">
+                      #{tag}
+                      <button onClick={() => setLabels(labels.filter((_, i) => i !== index))} className="hover:text-red-500">×</button>
+                    </span>
+                  ))}
+                </div>
+                <input 
+                  type="text" 
+                  value={currentLabel}
+                  onChange={(e) => setCurrentLabel(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && currentLabel.trim()) {
+                      e.preventDefault();
+                      if (!labels.includes(currentLabel.trim().toLowerCase())) {
+                        setLabels([...labels, currentLabel.trim().toLowerCase()]);
+                      }
+                      setCurrentLabel('');
+                    }
+                  }}
+                  placeholder="Type and press Enter to add labels..."
+                  className="w-full h-16 px-6 bg-white border border-[#D8CFBE] rounded-2xl text-[#0E1F14] focus:outline-none focus:border-[#1C3829] transition-all"
+                />
+              </div>
+
+              <div className="space-y-3">
                 <label className="text-[10px] font-mono uppercase tracking-[0.2em] text-[#0E1F14]/40 ml-1">Initial Quantity</label>
                 <div className="flex items-center gap-6 p-2 bg-white border border-[#D8CFBE] rounded-2xl">
                   <button 
@@ -301,7 +358,7 @@ export default function Phase6Page() {
                   >
                     <Minus className="w-5 h-5" />
                   </button>
-                  <div className="flex-1 text-center font-serif italic text-2xl">{quantity}</div>
+                  <div className="flex-1 text-center font-serif italic text-2xl text-[#1C3829]">{quantity}</div>
                   <button 
                     onClick={() => setQuantity(quantity + 1)}
                     className="w-12 h-12 rounded-xl bg-[#F6F1E9] flex items-center justify-center text-[#1C3829] active:scale-90 transition-all"
@@ -323,7 +380,9 @@ export default function Phase6Page() {
         );
       case 'search':
         const filteredInventory = inventory.filter(item => {
-          const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase());
+          const query = searchQuery.toLowerCase();
+          const matchesSearch = item.name.toLowerCase().includes(query) || 
+                               (item.labels && item.labels.some(label => label.toLowerCase().includes(query)));
           const matchesFilter = activeFilter === 'All' || item.room.toLowerCase() === activeFilter.toLowerCase();
           return matchesSearch && matchesFilter;
         });
@@ -345,9 +404,15 @@ export default function Phase6Page() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="What are you looking for?" 
-                className="w-full h-16 pl-14 pr-6 bg-white border border-[#D8CFBE] rounded-3xl text-[#0E1F14] placeholder:text-[#0E1F14]/30 focus:outline-none focus:ring-4 focus:ring-[#1C3829]/5 focus:border-[#1C3829] transition-all"
+                className="w-full h-16 pl-14 pr-16 bg-white border border-[#D8CFBE] rounded-3xl text-[#0E1F14] placeholder:text-[#0E1F14]/30 focus:outline-none focus:ring-4 focus:ring-[#1C3829]/5 focus:border-[#1C3829] transition-all"
                 autoFocus
               />
+              <button 
+                onClick={() => setCurrentScreen('voiceSearch')}
+                className="absolute inset-y-2 right-2 w-12 h-12 rounded-2xl bg-[#1C3829]/5 flex items-center justify-center text-[#1C3829] hover:bg-[#1C3829]/10 active:scale-90 transition-all"
+              >
+                <Mic className="w-5 h-5" />
+              </button>
             </div>
 
             {/* Filter Chips */}
@@ -391,6 +456,13 @@ export default function Phase6Page() {
                       <div className="flex-1">
                         <h3 className="text-lg font-serif italic text-[#1C3829] leading-tight">{item.name}</h3>
                         <p className="text-[9px] text-[#0E1F14]/40 font-mono uppercase tracking-widest mt-1">{item.room} — {item.spot}</p>
+                        {item.labels && item.labels.length > 0 && (
+                          <div className="flex flex-wrap gap-1 mt-2">
+                            {item.labels.map(label => (
+                              <span key={label} className="text-[8px] font-mono bg-[#1C3829]/5 text-[#1C3829]/60 px-1.5 py-0.5 rounded">#{label}</span>
+                            ))}
+                          </div>
+                        )}
                       </div>
                       <div className="w-12 h-12 rounded-full bg-[#1C3829]/5 border border-[#1C3829]/10 flex items-center justify-center text-sm font-serif italic text-[#1C3829]">
                         {item.qty}
@@ -407,6 +479,55 @@ export default function Phase6Page() {
                 </div>
               )}
             </div>
+          </div>
+        );
+      case 'voiceSearch':
+        return (
+          <div className="absolute inset-0 bg-[#1C3829] z-50 flex flex-col items-center justify-center p-12 animate-in fade-in duration-500">
+            <button 
+              onClick={() => setCurrentScreen('search')}
+              className="absolute top-12 left-8 w-12 h-12 rounded-full bg-white/10 flex items-center justify-center text-white active:scale-90 transition-transform"
+            >
+              <ArrowLeft className="w-6 h-6" />
+            </button>
+
+            <div className="flex flex-col items-center gap-12 text-center">
+              <div className="relative">
+                {/* Pulsing Rings */}
+                <div className="absolute inset-0 rounded-full bg-white/20 animate-ping" />
+                <div className="absolute inset-0 rounded-full bg-white/10 animate-ping [animation-delay:0.5s]" />
+                
+                <div className="relative w-32 h-32 rounded-full bg-white flex items-center justify-center text-[#1C3829] shadow-2xl">
+                  <Mic className="w-12 h-12" />
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <h2 className="text-4xl font-serif italic text-white">Listening...</h2>
+                <p className="text-white/40 font-mono text-xs uppercase tracking-[0.3em]">Say the name of an item or room</p>
+              </div>
+
+              {/* Mock Waveform */}
+              <div className="flex items-end gap-1.5 h-16">
+                {[0.4, 0.7, 0.5, 0.9, 0.6, 0.8, 0.4, 0.7, 0.5].map((h, i) => (
+                  <div 
+                    key={i}
+                    className="w-1.5 bg-white/30 rounded-full animate-pulse"
+                    style={{ 
+                      height: `${h * 100}%`,
+                      animationDelay: `${i * 0.1}s`
+                    }}
+                  />
+                ))}
+              </div>
+            </div>
+
+            <button 
+              onClick={() => setCurrentScreen('search')}
+              className="absolute bottom-20 text-white/60 font-mono text-[10px] uppercase tracking-[0.4em] border-b border-white/20 pb-1"
+            >
+              Tap to cancel
+            </button>
           </div>
         );
       case 'stock':
@@ -620,6 +741,7 @@ export default function Phase6Page() {
               <button 
                 onClick={() => {
                   setSelectedItemForDetail(null);
+                  setIsEditingSpot(false);
                   setCurrentScreen('search');
                 }} 
                 className="w-12 h-12 rounded-full bg-[#1C3829]/5 flex items-center justify-center text-[#1C3829] active:scale-90 transition-transform"
@@ -645,6 +767,17 @@ export default function Phase6Page() {
                 <span className="px-4 py-1.5 rounded-full bg-[#1C3829] text-[9px] font-mono uppercase tracking-widest text-white">{itemForDetail?.room}</span>
                 <span className="px-4 py-1.5 rounded-full bg-[#B8965A]/10 text-[9px] font-mono uppercase tracking-widest text-[#B8965A] border border-[#B8965A]/20">Qty: {itemForDetail?.qty}</span>
               </div>
+              
+              {itemForDetail?.labels && itemForDetail.labels.length > 0 && (
+                <div className="flex flex-wrap gap-2 mb-6">
+                  {itemForDetail.labels.map(label => (
+                    <span key={label} className="px-3 py-1 bg-white border border-[#D8CFBE] rounded-full text-[9px] font-mono text-[#1C3829]/60 uppercase tracking-widest">
+                      #{label}
+                    </span>
+                  ))}
+                </div>
+              )}
+
               <div className="text-[9px] text-[#0E1F14]/40 font-mono uppercase tracking-widest">
                 {formatMetadata(itemForDetail?.createdAt, itemForDetail?.updatedAt)}
               </div>
@@ -652,19 +785,53 @@ export default function Phase6Page() {
 
             {/* Info Grid */}
             <div className="bg-white border border-[#D8CFBE] rounded-[2.5rem] overflow-hidden mb-12 shadow-sm">
-              {[
-                { label: "Specific Location", value: itemForDetail?.spot },
-                { label: "Last Updated", value: formatDate(itemForDetail?.updatedAt || '') },
-                { label: "Inventory ID", value: `#${itemForDetail?.id}` }
-              ].map((row, i, arr) => (
-                <div 
-                  key={row.label}
-                  className={`flex justify-between items-center p-6 ${i !== arr.length - 1 ? 'border-b border-[#D8CFBE]/30' : ''}`}
-                >
-                  <span className="text-[10px] font-mono uppercase tracking-widest text-[#0E1F14]/30">{row.label}</span>
-                  <span className="text-sm font-serif italic text-[#1C3829] capitalize">{row.value}</span>
-                </div>
-              ))}
+              {/* Location Row */}
+              <div className="flex justify-between items-center p-6 border-b border-[#D8CFBE]/30">
+                <span className="text-[10px] font-mono uppercase tracking-widest text-[#0E1F14]/30">Specific Location</span>
+                {isEditingSpot ? (
+                  <div className="flex items-center gap-2">
+                    <input 
+                      type="text" 
+                      value={editedSpot}
+                      onChange={(e) => setEditedSpot(e.target.value)}
+                      className="bg-[#F6F1E9] border border-[#D8CFBE] rounded-lg px-3 py-1 text-sm font-serif italic text-[#1C3829] focus:outline-none focus:border-[#1C3829] w-32"
+                      autoFocus
+                      onKeyDown={(e) => e.key === 'Enter' && handleUpdateDetailSpot()}
+                    />
+                    <button 
+                      onClick={handleUpdateDetailSpot}
+                      className="text-[10px] font-mono uppercase tracking-widest text-green-600 font-bold px-2 py-1 hover:bg-green-50 rounded transition-colors"
+                    >
+                      Save
+                    </button>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-3">
+                    <span className="text-sm font-serif italic text-[#1C3829] capitalize">{itemForDetail?.spot}</span>
+                    <button 
+                      onClick={() => {
+                        setEditedSpot(itemForDetail?.spot || '');
+                        setIsEditingSpot(true);
+                      }}
+                      className="text-[10px] font-mono uppercase tracking-widest text-[#B8965A] hover:text-[#1C3829] transition-colors"
+                    >
+                      Edit
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              {/* Last Updated Row */}
+              <div className="flex justify-between items-center p-6 border-b border-[#D8CFBE]/30">
+                <span className="text-[10px] font-mono uppercase tracking-widest text-[#0E1F14]/30">Last Updated</span>
+                <span className="text-sm font-serif italic text-[#1C3829] capitalize">{formatDate(itemForDetail?.updatedAt || '')}</span>
+              </div>
+
+              {/* ID Row */}
+              <div className="flex justify-between items-center p-6">
+                <span className="text-[10px] font-mono uppercase tracking-widest text-[#0E1F14]/30">Inventory ID</span>
+                <span className="text-sm font-serif italic text-[#1C3829] capitalize">#{itemForDetail?.id}</span>
+              </div>
             </div>
 
             {/* Action Buttons */}
