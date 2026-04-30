@@ -1,16 +1,16 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Home, Search, Box, User, Battery, Wifi, Signal, Mic, Plus, Minus, ChevronRight, Laptop, Bath, UtensilsCrossed, ArrowLeft, Camera, Upload, LogOut } from 'lucide-react';
+import { Home, Search, Box, User, Battery, Wifi, Signal, Mic, Plus, Minus, ChevronRight, Laptop, Bath, UtensilsCrossed, ArrowLeft, Camera, Upload, LogOut, Armchair, Monitor, Wrench } from 'lucide-react';
 
 const INITIAL_INVENTORY = [
   { 
     id: 1, 
-    name: 'Laptop Charger', 
-    room: 'electronics', 
-    spot: 'desk drawer', 
-    qty: 1,
-    labels: ['essential', 'work'],
+    name: 'Spare Pillow', 
+    room: 'bedroom', 
+    spot: 'closet shelf', 
+    qty: 2,
+    labels: ['essential', 'bedding'],
     createdAt: '2026-04-01T10:00:00Z',
     updatedAt: '2026-04-01T10:00:00Z'
   },
@@ -32,7 +32,7 @@ export default function Phase6Page() {
 
   // Form State
   const [itemName, setItemName] = useState('');
-  const [selectedRoom, setSelectedRoom] = useState('electronics');
+  const [selectedRoom, setSelectedRoom] = useState('bedroom');
   const [itemSpot, setItemSpot] = useState('');
   const [quantity, setQuantity] = useState(1);
   const [labels, setLabels] = useState<string[]>([]);
@@ -41,15 +41,23 @@ export default function Phase6Page() {
   // Search State
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState('All');
+  const [isSearchMenuOpen, setIsSearchMenuOpen] = useState(false);
   const [selectedItemForDetail, setSelectedItemForDetail] = useState<number | null>(null);
   const [isEditingSpot, setIsEditingSpot] = useState(false);
   const [editedSpot, setEditedSpot] = useState('');
 
   // Edit State
   const [selectedItemForUpdate, setSelectedItemForUpdate] = useState<number | null>(null);
-  const [tempRoom, setTempRoom] = useState('electronics');
+  const [tempRoom, setTempRoom] = useState('bedroom');
   const [tempSpot, setTempSpot] = useState('');
   const [tempQty, setTempQty] = useState(0);
+
+  // Stock Filter State
+  const [stockFilter, setStockFilter] = useState('All');
+  const [isStockMenuOpen, setIsStockMenuOpen] = useState(false);
+
+  // Camera Navigation State
+  const [cameraReturnScreen, setCameraReturnScreen] = useState('home');
 
   // Determine if Nav should be hidden
   const isNavHidden = ['camera', 'voiceSearch', 'updateStock', 'itemDetail', 'foundSuccess'].includes(currentScreen);
@@ -93,11 +101,11 @@ export default function Phase6Page() {
       updatedAt: now
     };
 
-    setInventory([...inventory, newItem]);
+    setInventory(prev => [...prev, newItem]);
     
     // Reset Form
     setItemName('');
-    setSelectedRoom('electronics');
+    setSelectedRoom('bedroom');
     setItemSpot('');
     setQuantity(1);
     setLabels([]);
@@ -106,11 +114,21 @@ export default function Phase6Page() {
     setCurrentScreen('home');
   };
 
+  const handleDeleteItem = () => {
+    if (selectedItemForUpdate === null) return;
+    
+    if (confirm("Are you sure you want to remove this item from your inventory?")) {
+      setInventory(prev => prev.filter(item => item.id !== selectedItemForUpdate));
+      setSelectedItemForUpdate(null);
+      setCurrentScreen('stock');
+    }
+  };
+
   const handleUpdateStock = () => {
     if (selectedItemForUpdate === null) return;
     
     const now = new Date().toISOString();
-    setInventory(inventory.map(item => 
+    setInventory(prevInventory => prevInventory.map(item => 
       item.id === selectedItemForUpdate 
         ? { 
             ...item, 
@@ -136,7 +154,7 @@ export default function Phase6Page() {
     if (selectedItemForDetail === null) return;
     
     const now = new Date().toISOString();
-    setInventory(inventory.map(item => 
+    setInventory(prevInventory => prevInventory.map(item => 
       item.id === selectedItemForDetail 
         ? { 
             ...item, 
@@ -173,17 +191,20 @@ export default function Phase6Page() {
               <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
                 <Search className="w-5 h-5 text-[#1C3829]/30 group-hover:text-[#1C3829] transition-colors" />
               </div>
-              <div className="w-full h-16 pl-12 pr-4 bg-white/50 backdrop-blur-sm border border-[#D8CFBE] rounded-2xl flex items-center text-[#0E1F14]/30 font-mono tracking-tight">
+              <div className="w-full h-16 pl-12 pr-4 bg-white/50 backdrop-blur-sm border border-[#D8CFBE] rounded-2xl flex items-center text-[#0E1F14]/60 font-mono tracking-tight">
                 Search inventory...
               </div>
             </div>
 
             {/* Collections Grid */}
-            <div className="space-y-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {[
-                { name: 'Electronics', icon: Laptop, room: 'electronics', color: '#1C3829' },
+                { name: 'Bedroom', icon: Home, room: 'bedroom', color: '#1C3829' },
                 { name: 'Bathroom', icon: Bath, room: 'bathroom', color: '#5A8A97' },
-                { name: 'Kitchen', icon: UtensilsCrossed, room: 'kitchen', color: '#B8965A' }
+                { name: 'Kitchen', icon: UtensilsCrossed, room: 'kitchen', color: '#B8965A' },
+                { name: 'Living Room', icon: Armchair, room: 'living room', color: '#8E9A82' },
+                { name: 'Office', icon: Monitor, room: 'office', color: '#4A5D6E' },
+                { name: 'Garage', icon: Wrench, room: 'garage', color: '#6E5D4A' }
               ].map((collection, i) => (
                 <div 
                   key={collection.name}
@@ -191,18 +212,15 @@ export default function Phase6Page() {
                     setActiveFilter(collection.name);
                     setCurrentScreen('search');
                   }}
-                  className="flex items-center p-6 bg-white border border-[#D8CFBE]/60 rounded-3xl hover:border-[#1C3829]/30 transition-all cursor-pointer group shadow-sm hover:shadow-md active:scale-[0.98] animate-in fade-in slide-in-from-bottom-4 duration-500"
+                  className="flex flex-col p-6 bg-white border border-[#D8CFBE]/60 rounded-3xl hover:border-[#1C3829]/30 transition-all cursor-pointer group shadow-sm hover:shadow-md active:scale-[0.98] animate-in fade-in slide-in-from-bottom-4 duration-500"
                   style={{ animationDelay: `${i * 100}ms` }}
                 >
-                  <div className="w-16 h-16 rounded-2xl bg-[#F6F1E9] flex items-center justify-center text-[#1C3829] mr-5 transition-transform group-hover:rotate-6">
-                    <collection.icon className="w-8 h-8" />
+                  <div className="w-12 h-12 rounded-2xl bg-[#F6F1E9] flex items-center justify-center text-[#1C3829] mb-4 transition-transform group-hover:rotate-6">
+                    <collection.icon className="w-6 h-6" />
                   </div>
                   <div className="flex-1">
-                    <h3 className="text-xl font-serif italic text-[#1C3829]">{collection.name}</h3>
-                    <p className="text-[10px] text-[#0E1F14]/40 font-mono uppercase tracking-[0.2em] mt-1">{getCountByRoom(collection.room)} Items — View All</p>
-                  </div>
-                  <div className="w-10 h-10 rounded-full border border-[#D8CFBE] flex items-center justify-center text-[#D8CFBE] group-hover:border-[#1C3829] group-hover:text-[#1C3829] transition-colors">
-                    <ChevronRight className="w-5 h-5" />
+                    <h3 className="text-lg font-serif italic text-[#1C3829] leading-tight">{collection.name}</h3>
+                    <p className="text-[9px] text-[#0E1F14]/70 font-mono uppercase tracking-[0.2em] mt-1">{getCountByRoom(collection.room)} Items</p>
                   </div>
                 </div>
               ))}
@@ -214,7 +232,7 @@ export default function Phase6Page() {
           <div className="absolute inset-0 bg-black z-50 flex flex-col animate-in fade-in duration-500">
             {/* Camera Header */}
             <div className="p-8 flex items-center justify-between">
-              <button onClick={() => setCurrentScreen('home')} className="w-12 h-12 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center text-white active:scale-90 transition-transform">
+              <button onClick={() => setCurrentScreen(cameraReturnScreen)} className="w-12 h-12 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center text-white active:scale-90 transition-transform">
                 <ArrowLeft className="w-6 h-6" />
               </button>
               <div className="flex items-center gap-2">
@@ -242,16 +260,16 @@ export default function Phase6Page() {
             {/* Camera Controls */}
             <div className="p-12 pb-20 flex flex-col items-center gap-10">
               <button 
-                onClick={() => setCurrentScreen('addForm')}
+                onClick={() => setCurrentScreen(cameraReturnScreen)}
                 className="w-24 h-24 rounded-full border-4 border-white p-1.5 active:scale-90 transition-transform"
               >
                 <div className="w-full h-full rounded-full bg-white" />
               </button>
               <button 
-                onClick={() => setCurrentScreen('addForm')}
+                onClick={() => setCurrentScreen(cameraReturnScreen)}
                 className="text-white/60 text-[10px] font-mono uppercase tracking-[0.3em] hover:text-white transition-colors border-b border-white/10 pb-1"
               >
-                skip — add manual
+                skip — return
               </button>
             </div>
           </div>
@@ -261,7 +279,7 @@ export default function Phase6Page() {
           <div className="flex flex-col animate-in slide-in-from-right duration-500">
             {/* Form Header */}
             <div className="flex items-center gap-5 mb-10">
-              <button onClick={() => setCurrentScreen('camera')} className="w-12 h-12 rounded-full bg-[#1C3829]/5 flex items-center justify-center text-[#1C3829] active:scale-90 transition-transform">
+              <button onClick={() => setCurrentScreen('home')} className="w-12 h-12 rounded-full bg-[#1C3829]/5 flex items-center justify-center text-[#1C3829] active:scale-90 transition-transform">
                 <ArrowLeft className="w-5 h-5" />
               </button>
               <h1 className="text-3xl font-serif italic text-[#1C3829]">New Item</h1>
@@ -270,26 +288,26 @@ export default function Phase6Page() {
             {/* Form Fields */}
             <div className="space-y-8">
               <div className="space-y-3">
-                <label className="text-[10px] font-mono uppercase tracking-[0.2em] text-[#0E1F14]/40 ml-1">What is it?</label>
+                <label className="text-[10px] font-mono uppercase tracking-[0.2em] text-[#0E1F14]/70 ml-1">What is it?</label>
                 <input 
                   type="text" 
                   value={itemName}
                   onChange={(e) => setItemName(e.target.value)}
                   placeholder="e.g. Vintage Camera"
-                  className="w-full h-16 px-6 bg-white border border-[#D8CFBE] rounded-2xl text-[#0E1F14] placeholder:text-[#0E1F14]/20 focus:outline-none focus:ring-2 focus:ring-[#1C3829]/10 focus:border-[#1C3829] transition-all"
+                  className="w-full h-16 px-6 bg-white border border-[#D8CFBE] rounded-2xl text-[#0E1F14] placeholder:text-[#0E1F14]/50 focus:outline-none focus:ring-2 focus:ring-[#1C3829]/10 focus:border-[#1C3829] transition-all"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-3">
-                  <label className="text-[10px] font-mono uppercase tracking-[0.2em] text-[#0E1F14]/40 ml-1">Where is it?</label>
+                  <label className="text-[10px] font-mono uppercase tracking-[0.2em] text-[#0E1F14]/70 ml-1">Where is it?</label>
                   <div className="relative">
                     <select 
                       value={selectedRoom}
                       onChange={(e) => setSelectedRoom(e.target.value)}
                       className="w-full h-16 px-6 bg-white border border-[#D8CFBE] rounded-2xl text-[#0E1F14] focus:outline-none focus:border-[#1C3829] transition-all appearance-none"
                     >
-                      <option value="electronics">Electronics</option>
+                      <option value="bedroom">Bedroom</option>
                       <option value="bathroom">Bathroom</option>
                       <option value="kitchen">Kitchen</option>
                       <option value="living room">Living Room</option>
@@ -300,7 +318,7 @@ export default function Phase6Page() {
                   </div>
                 </div>
                 <div className="space-y-3">
-                  <label className="text-[10px] font-mono uppercase tracking-[0.2em] text-[#0E1F14]/40 ml-1">Specific Spot</label>
+                  <label className="text-[10px] font-mono uppercase tracking-[0.2em] text-[#0E1F14]/70 ml-1">Specific Spot</label>
                   <input 
                     type="text" 
                     value={itemSpot}
@@ -312,8 +330,14 @@ export default function Phase6Page() {
               </div>
 
               <div className="space-y-3">
-                <label className="text-[10px] font-mono uppercase tracking-[0.2em] text-[#0E1F14]/40 ml-1">Visual Reference</label>
-                <div className="w-full h-44 border-2 border-dashed border-[#D8CFBE] rounded-3xl flex flex-col items-center justify-center text-[#1C3829]/30 hover:border-[#1C3829]/40 hover:bg-[#1C3829]/5 transition-all cursor-pointer group">
+                <label className="text-[10px] font-mono uppercase tracking-[0.2em] text-[#0E1F14]/70 ml-1">Visual Reference</label>
+                <div 
+                  onClick={() => {
+                    setCameraReturnScreen('addForm');
+                    setCurrentScreen('camera');
+                  }}
+                  className="w-full h-44 border-2 border-dashed border-[#D8CFBE] rounded-3xl flex flex-col items-center justify-center text-[#1C3829]/30 hover:border-[#1C3829]/40 hover:bg-[#1C3829]/5 transition-all cursor-pointer group"
+                >
                   <div className="w-12 h-12 rounded-full bg-[#1C3829]/5 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
                     <Upload className="w-6 h-6" />
                   </div>
@@ -322,7 +346,7 @@ export default function Phase6Page() {
               </div>
 
               <div className="space-y-3">
-                <label className="text-[10px] font-mono uppercase tracking-[0.2em] text-[#0E1F14]/40 ml-1">Labels / Hashtags</label>
+                <label className="text-[10px] font-mono uppercase tracking-[0.2em] text-[#0E1F14]/70 ml-1">Labels / Hashtags</label>
                 <div className="flex flex-wrap gap-2 mb-2">
                   {labels.map((tag, index) => (
                     <span key={index} className="px-3 py-1 bg-[#1C3829]/5 border border-[#1C3829]/10 rounded-full text-[10px] font-mono text-[#1C3829] flex items-center gap-2">
@@ -350,18 +374,23 @@ export default function Phase6Page() {
               </div>
 
               <div className="space-y-3">
-                <label className="text-[10px] font-mono uppercase tracking-[0.2em] text-[#0E1F14]/40 ml-1">Initial Quantity</label>
+                <label className="text-[10px] font-mono uppercase tracking-[0.2em] text-[#0E1F14]/70 ml-1">Initial Quantity</label>
                 <div className="flex items-center gap-6 p-2 bg-white border border-[#D8CFBE] rounded-2xl">
                   <button 
                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                    className="w-12 h-12 rounded-xl bg-[#F6F1E9] flex items-center justify-center text-[#1C3829] active:scale-90 transition-all"
+                    className="w-12 h-12 rounded-xl bg-[#F6F1E9] flex items-center justify-center text-[#1C3829] active:scale-90 transition-all flex-shrink-0"
                   >
                     <Minus className="w-5 h-5" />
                   </button>
-                  <div className="flex-1 text-center font-serif italic text-2xl text-[#1C3829]">{quantity}</div>
+                  <input 
+                    type="number"
+                    value={quantity}
+                    onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 0))}
+                    className="flex-1 text-center font-serif italic text-3xl text-[#1C3829] bg-transparent border-none focus:outline-none w-full"
+                  />
                   <button 
                     onClick={() => setQuantity(quantity + 1)}
-                    className="w-12 h-12 rounded-xl bg-[#F6F1E9] flex items-center justify-center text-[#1C3829] active:scale-90 transition-all"
+                    className="w-12 h-12 rounded-xl bg-[#F6F1E9] flex items-center justify-center text-[#1C3829] active:scale-90 transition-all flex-shrink-0"
                   >
                     <Plus className="w-5 h-5" />
                   </button>
@@ -404,7 +433,7 @@ export default function Phase6Page() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="What are you looking for?" 
-                className="w-full h-16 pl-14 pr-16 bg-white border border-[#D8CFBE] rounded-3xl text-[#0E1F14] placeholder:text-[#0E1F14]/30 focus:outline-none focus:ring-4 focus:ring-[#1C3829]/5 focus:border-[#1C3829] transition-all"
+                className="w-full h-16 pl-14 pr-16 bg-white border border-[#D8CFBE] rounded-3xl text-[#0E1F14] placeholder:text-[#0E1F14]/60 focus:outline-none focus:ring-4 focus:ring-[#1C3829]/5 focus:border-[#1C3829] transition-all"
                 autoFocus
               />
               <button 
@@ -415,9 +444,42 @@ export default function Phase6Page() {
               </button>
             </div>
 
-            {/* Filter Chips */}
-            <div className="flex gap-2 mb-10 overflow-x-auto pb-4 no-scrollbar">
-              {['All', 'Electronics', 'Bathroom', 'Kitchen'].map((filter) => (
+            {/* Filter Chips & Menu */}
+            <div className="flex items-center gap-2 mb-10 overflow-x-auto pb-4 no-scrollbar">
+              <div className="relative flex-shrink-0 mr-2">
+                <button 
+                  onClick={() => setIsSearchMenuOpen(!isSearchMenuOpen)}
+                  className="w-12 h-12 rounded-2xl bg-[#1C3829]/5 flex flex-col items-center justify-center gap-1 hover:bg-[#1C3829]/10 transition-all cursor-pointer"
+                >
+                  <div className="w-1 h-1 rounded-full bg-[#1C3829]/40" />
+                  <div className="w-1 h-1 rounded-full bg-[#1C3829]/40" />
+                  <div className="w-1 h-1 rounded-full bg-[#1C3829]/40" />
+                </button>
+
+                {isSearchMenuOpen && (
+                  <div className="absolute left-0 top-full mt-2 w-48 bg-white border border-[#D8CFBE] rounded-2xl shadow-xl z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+                    <div className="p-2 bg-[#F6F1E9]/30 border-b border-[#D8CFBE]/30 text-[8px] font-mono uppercase tracking-widest text-[#0E1F14]/70 px-4 py-2">
+                      Filter by Room
+                    </div>
+                    {['All', 'Bedroom', 'Bathroom', 'Kitchen', 'Living Room', 'Office', 'Garage'].map((filter) => (
+                      <button
+                        key={filter}
+                        onClick={() => {
+                          setActiveFilter(filter);
+                          setIsSearchMenuOpen(false);
+                        }}
+                        className={`w-full text-left px-4 py-3 text-xs font-serif italic transition-colors hover:bg-[#F6F1E9] ${
+                          activeFilter === filter ? 'text-[#1C3829] bg-[#F6F1E9]/50 font-bold' : 'text-[#0E1F14]/60'
+                        }`}
+                      >
+                        {filter}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {['All', 'Bedroom', 'Bathroom', 'Kitchen', 'Living Room', 'Office', 'Garage'].map((filter) => (
                 <button 
                   key={filter}
                   onClick={() => setActiveFilter(filter)}
@@ -434,12 +496,17 @@ export default function Phase6Page() {
 
             {/* Results Area */}
             <div className="space-y-6">
-              <h2 className="text-[10px] font-mono uppercase tracking-[0.3em] text-[#0E1F14]/20 ml-2">
+              <h2 className="text-[10px] font-mono uppercase tracking-[0.3em] text-[#0E1F14]/50 ml-2">
                 {searchQuery || activeFilter !== 'All' ? 'Matched Items' : 'Recent Items'}
               </h2>
               {filteredInventory.length > 0 ? (
                 filteredInventory.map((item, i) => {
-                  const Icon = item.room === 'electronics' ? Laptop : item.room === 'bathroom' ? Bath : item.room === 'kitchen' ? UtensilsCrossed : Box;
+                  const Icon = item.room === 'bedroom' ? Home : 
+                               item.room === 'bathroom' ? Bath : 
+                               item.room === 'kitchen' ? UtensilsCrossed : 
+                               item.room === 'living room' ? Armchair :
+                               item.room === 'office' ? Monitor :
+                               item.room === 'garage' ? Wrench : Box;
                   return (
                     <div 
                       key={item.id}
@@ -453,13 +520,13 @@ export default function Phase6Page() {
                       <div className="w-14 h-14 rounded-2xl bg-[#F6F1E9] flex items-center justify-center text-[#1C3829] mr-5">
                         <Icon className="w-6 h-6" />
                       </div>
-                      <div className="flex-1">
-                        <h3 className="text-lg font-serif italic text-[#1C3829] leading-tight">{item.name}</h3>
-                        <p className="text-[9px] text-[#0E1F14]/40 font-mono uppercase tracking-widest mt-1">{item.room} — {item.spot}</p>
+                      <div className="flex-1 min-w-0">
+                        <h3 className="text-lg font-serif italic text-[#1C3829] leading-tight break-words">{item.name}</h3>
+                        <p className="text-[9px] text-[#0E1F14]/70 font-mono uppercase tracking-widest mt-1 break-words line-clamp-2">{item.room} — {item.spot}</p>
                         {item.labels && item.labels.length > 0 && (
                           <div className="flex flex-wrap gap-1 mt-2">
                             {item.labels.map(label => (
-                              <span key={label} className="text-[8px] font-mono bg-[#1C3829]/5 text-[#1C3829]/60 px-1.5 py-0.5 rounded">#{label}</span>
+                              <span key={label} className="text-[8px] font-mono bg-[#1C3829]/5 text-[#1C3829]/60 px-1.5 py-0.5 rounded break-all">#{label}</span>
                             ))}
                           </div>
                         )}
@@ -471,11 +538,20 @@ export default function Phase6Page() {
                   );
                 })
               ) : (
-                <div className="py-20 text-center">
-                  <div className="w-20 h-20 rounded-full bg-[#D8CFBE]/20 flex items-center justify-center mx-auto mb-4">
-                    <Search className="w-10 h-10 text-[#D8CFBE]" />
+                <div className="py-20 text-center animate-in fade-in zoom-in-95 duration-500">
+                  <div className="w-24 h-24 rounded-full bg-[#D8CFBE]/10 flex items-center justify-center mx-auto mb-6 relative">
+                    <Search className="w-10 h-10 text-[#D8CFBE]/40" />
+                    <div className="absolute -top-1 -right-1 w-6 h-6 bg-white rounded-full border border-[#D8CFBE] flex items-center justify-center text-[#D8CFBE] text-xs font-bold">?</div>
                   </div>
-                  <p className="text-xs text-[#0E1F14]/30 font-mono uppercase tracking-widest">Nothing found here</p>
+                  <h3 className="text-2xl font-serif italic text-[#1C3829] mb-2">Nothing found here</h3>
+                  <p className="text-[10px] text-[#0E1F14]/60 font-mono uppercase tracking-widest mb-8 leading-relaxed max-w-[200px] mx-auto">Try a different search term or check another room.</p>
+                  
+                  <button 
+                    onClick={() => setCurrentScreen('addForm')}
+                    className="px-8 py-4 bg-[#1C3829] text-[#F6F1E9] rounded-2xl font-serif italic text-lg shadow-lg shadow-[#1C3829]/10 active:scale-95 transition-all"
+                  >
+                    Add This Item Instead
+                  </button>
                 </div>
               )}
             </div>
@@ -551,16 +627,48 @@ export default function Phase6Page() {
             </div>
 
             {/* Stock List */}
-            <div className="space-y-4">
+            <div className="space-y-4 relative">
               <div className="flex justify-between items-center px-2 mb-2">
-                <h2 className="text-[10px] font-mono uppercase tracking-[0.3em] text-[#0E1F14]/20">Inventory List</h2>
-                <div className="flex gap-1">
-                  <div className="w-1 h-1 rounded-full bg-[#1C3829]/20" />
-                  <div className="w-1 h-1 rounded-full bg-[#1C3829]/20" />
-                  <div className="w-1 h-1 rounded-full bg-[#1C3829]/20" />
+                <h2 className="text-[10px] font-mono uppercase tracking-[0.3em] text-[#0E1F14]/50">
+                  {stockFilter === 'All' ? 'Inventory List' : `${stockFilter} List`}
+                </h2>
+                <div className="relative">
+                  <button 
+                    onClick={() => setIsStockMenuOpen(!isStockMenuOpen)}
+                    className="flex gap-1 p-2 hover:bg-[#1C3829]/5 rounded-lg transition-colors cursor-pointer"
+                  >
+                    <div className="w-1 h-1 rounded-full bg-[#1C3829]/40" />
+                    <div className="w-1 h-1 rounded-full bg-[#1C3829]/40" />
+                    <div className="w-1 h-1 rounded-full bg-[#1C3829]/40" />
+                  </button>
+
+                  {isStockMenuOpen && (
+                    <div className="absolute right-0 top-full mt-2 w-48 bg-white border border-[#D8CFBE] rounded-2xl shadow-xl z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+                      <div className="p-2 bg-[#F6F1E9]/30 border-b border-[#D8CFBE]/30 text-[8px] font-mono uppercase tracking-widest text-[#0E1F14]/70 px-4 py-2">
+                        Filter by Room
+                      </div>
+                      {['All', 'Bedroom', 'Bathroom', 'Kitchen', 'Living Room', 'Office', 'Garage'].map((filter) => (
+                        <button
+                          key={filter}
+                          onClick={() => {
+                            setStockFilter(filter);
+                            setIsStockMenuOpen(false);
+                          }}
+                          className={`w-full text-left px-4 py-3 text-xs font-serif italic transition-colors hover:bg-[#F6F1E9] ${
+                            stockFilter === filter ? 'text-[#1C3829] bg-[#F6F1E9]/50 font-bold' : 'text-[#0E1F14]/60'
+                          }`}
+                        >
+                          {filter}
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
-              {inventory.map((item, i) => (
+              
+              {inventory
+                .filter(item => stockFilter === 'All' || item.room.toLowerCase() === stockFilter.toLowerCase())
+                .map((item, i) => (
                 <div 
                   key={item.id}
                   onClick={() => {
@@ -573,15 +681,21 @@ export default function Phase6Page() {
                   className="flex items-center p-6 bg-white border border-[#D8CFBE]/60 rounded-3xl hover:border-[#1C3829]/30 transition-all cursor-pointer group active:scale-[0.98] animate-in fade-in slide-in-from-bottom-4 duration-500"
                   style={{ animationDelay: `${i * 50}ms` }}
                 >
-                  <div className="flex-1">
-                    <h3 className="text-xl font-serif italic text-[#1C3829] leading-tight">{item.name}</h3>
-                    <p className="text-[9px] text-[#0E1F14]/40 font-mono uppercase tracking-widest mt-1.5">{item.room} · {item.spot}</p>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-xl font-serif italic text-[#1C3829] leading-tight break-words">{item.name}</h3>
+                    <p className="text-[9px] text-[#0E1F14]/70 font-mono uppercase tracking-widest mt-1.5 break-words">{item.room} · {item.spot}</p>
                   </div>
                   <div className="text-5xl font-serif italic text-[#B8965A] ml-6 group-hover:scale-110 transition-transform">
                     {item.qty}
                   </div>
                 </div>
               ))}
+
+              {inventory.filter(item => stockFilter === 'All' || item.room.toLowerCase() === stockFilter.toLowerCase()).length === 0 && (
+                <div className="py-20 text-center bg-white/30 rounded-[3rem] border border-dashed border-[#D8CFBE]">
+                  <p className="text-xs text-[#0E1F14]/60 font-mono uppercase tracking-widest">No items in this room</p>
+                </div>
+              )}
             </div>
           </div>
         );
@@ -607,27 +721,27 @@ export default function Phase6Page() {
             {/* Item Info (Immutable) */}
             <div className="bg-white p-8 rounded-[2.5rem] border border-[#D8CFBE] mb-10 text-center shadow-sm relative overflow-hidden">
               <div className="absolute top-0 left-0 w-full h-1 bg-[#1C3829]/5" />
-              <div className="w-20 h-20 rounded-2xl bg-[#F6F1E9] flex items-center justify-center text-[#1C3829] mx-auto mb-6">
-                {currentItem?.room === 'electronics' ? <Laptop className="w-10 h-10" /> : <Box className="w-10 h-10" />}
+              <div className="w-20 h-20 rounded-2xl bg-[#F6F1E9] flex items-center justify-center text-[#1C3829] mx-auto mb-6 flex-shrink-0">
+                {currentItem?.room === 'bedroom' ? <Home className="w-10 h-10" /> : <Box className="w-10 h-10" />}
               </div>
-              <h1 className="text-4xl font-serif italic text-[#1C3829] mb-1">{currentItem?.name}</h1>
-              <div className="text-[9px] text-[#0E1F14]/40 font-mono uppercase tracking-widest mb-3">
+              <h1 className="text-4xl font-serif italic text-[#1C3829] mb-1 break-words">{currentItem?.name}</h1>
+              <div className="text-[9px] text-[#0E1F14]/70 font-mono uppercase tracking-widest mb-3">
                 {formatMetadata(currentItem?.createdAt, currentItem?.updatedAt)}
               </div>
-              <p className="text-[10px] text-[#0E1F14]/30 font-mono uppercase tracking-widest">Name is Immutable</p>
+              <p className="text-[10px] text-[#0E1F14]/60 font-mono uppercase tracking-widest">Name is Immutable</p>
             </div>
 
             {/* Editable Fields */}
             <div className="flex flex-col gap-10 mb-12">
               <div className="space-y-3">
-                <label className="text-[10px] font-mono uppercase tracking-[0.2em] text-[#0E1F14]/40 ml-1">Room</label>
+                <label className="text-[10px] font-mono uppercase tracking-[0.2em] text-[#0E1F14]/70 ml-1">Room</label>
                 <div className="relative">
                   <select 
                     value={tempRoom}
                     onChange={(e) => setTempRoom(e.target.value)}
                     className="w-full h-16 px-6 bg-white border border-[#D8CFBE] rounded-2xl text-[#0E1F14] focus:outline-none focus:border-[#1C3829] transition-all appearance-none"
                   >
-                    <option value="electronics">Electronics</option>
+                    <option value="bedroom">Bedroom</option>
                     <option value="bathroom">Bathroom</option>
                     <option value="kitchen">Kitchen</option>
                     <option value="living room">Living Room</option>
@@ -639,7 +753,7 @@ export default function Phase6Page() {
               </div>
 
               <div className="space-y-3">
-                <label className="text-[10px] font-mono uppercase tracking-[0.2em] text-[#0E1F14]/40 ml-1">Spot</label>
+                <label className="text-[10px] font-mono uppercase tracking-[0.2em] text-[#0E1F14]/70 ml-1">Spot</label>
                 <input 
                   type="text" 
                   value={tempSpot}
@@ -651,20 +765,23 @@ export default function Phase6Page() {
 
               {/* Stepper UI */}
               <div className="space-y-4">
-                <label className="text-[10px] font-mono uppercase tracking-[0.2em] text-[#0E1F14]/40 ml-1 text-center block">Update Quantity</label>
+                <label className="text-[10px] font-mono uppercase tracking-[0.2em] text-[#0E1F14]/70 ml-1 text-center block">Update Quantity</label>
                 <div className="flex items-center gap-10 bg-white border border-[#D8CFBE] rounded-3xl p-4 justify-center">
                   <button 
                     onClick={() => setTempQty(Math.max(0, tempQty - 1))}
-                    className="w-16 h-16 rounded-2xl bg-[#F6F1E9] flex items-center justify-center text-[#1C3829] active:scale-90 transition-all shadow-sm"
+                    className="w-16 h-16 rounded-2xl bg-[#F6F1E9] flex items-center justify-center text-[#1C3829] active:scale-90 transition-all shadow-sm flex-shrink-0"
                   >
                     <Minus className="w-8 h-8" />
                   </button>
-                  <div className="text-7xl font-serif italic text-[#1C3829] min-w-[100px] text-center" key={tempQty}>
-                    {tempQty}
-                  </div>
+                  <input 
+                    type="number"
+                    value={tempQty}
+                    onChange={(e) => setTempQty(Math.max(0, parseInt(e.target.value) || 0))}
+                    className="text-7xl font-serif italic text-[#1C3829] w-32 text-center bg-transparent border-none focus:outline-none"
+                  />
                   <button 
                     onClick={() => setTempQty(tempQty + 1)}
-                    className="w-16 h-16 rounded-2xl bg-[#F6F1E9] flex items-center justify-center text-[#1C3829] active:scale-90 transition-all shadow-sm"
+                    className="w-16 h-16 rounded-2xl bg-[#F6F1E9] flex items-center justify-center text-[#1C3829] active:scale-90 transition-all shadow-sm flex-shrink-0"
                   >
                     <Plus className="w-8 h-8" />
                   </button>
@@ -672,13 +789,21 @@ export default function Phase6Page() {
               </div>
             </div>
 
-            {/* Update Button */}
-            <button 
-              onClick={handleUpdateStock}
-              className="w-full h-20 bg-[#1C3829] text-[#F6F1E9] rounded-3xl font-serif italic text-2xl shadow-xl shadow-[#1C3829]/20 hover:scale-[1.02] active:scale-[0.98] transition-all mb-10"
-            >
-              Update Item Details
-            </button>
+            {/* Action Buttons */}
+            <div className="flex flex-col gap-4 mb-10">
+              <button 
+                onClick={handleUpdateStock}
+                className="w-full h-20 bg-[#1C3829] text-[#F6F1E9] rounded-3xl font-serif italic text-2xl shadow-xl shadow-[#1C3829]/20 hover:scale-[1.02] active:scale-[0.98] transition-all"
+              >
+                Update Item Details
+              </button>
+              <button 
+                onClick={handleDeleteItem}
+                className="w-full h-16 border-2 border-[#C0392B]/20 text-[#C0392B] rounded-2xl font-mono uppercase tracking-[0.2em] text-[10px] font-bold hover:bg-[#C0392B] hover:text-white transition-all flex items-center justify-center gap-4 active:scale-[0.98]"
+              >
+                Delete Item
+              </button>
+            </div>
           </div>
         );
       case 'profile':
@@ -695,13 +820,13 @@ export default function Phase6Page() {
                 </div>
               </div>
               <h1 className="text-3xl font-serif italic text-[#1C3829] mb-1">Sonal Doiphode</h1>
-              <p className="text-[10px] text-[#0E1F14]/40 font-mono uppercase tracking-widest">Premium Curator</p>
+              <p className="text-[10px] text-[#0E1F14]/70 font-mono uppercase tracking-widest">Premium Curator</p>
             </div>
 
             {/* Sections */}
             <div className="space-y-10">
               <div className="space-y-3">
-                <h2 className="text-[10px] font-mono uppercase tracking-[0.3em] text-[#0E1F14]/20 ml-4">Account Settings</h2>
+                <h2 className="text-[10px] font-mono uppercase tracking-[0.3em] text-[#0E1F14]/50 ml-4">Account Settings</h2>
                 <div className="bg-white border border-[#D8CFBE] rounded-[2.5rem] overflow-hidden shadow-sm">
                   {[
                     { label: "Profile Information", value: "Edit ›" },
@@ -732,7 +857,12 @@ export default function Phase6Page() {
         );
       case 'itemDetail':
         const itemForDetail = inventory.find(i => i.id === selectedItemForDetail);
-        const DetailIcon = itemForDetail?.room === 'electronics' ? Laptop : itemForDetail?.room === 'bathroom' ? Bath : itemForDetail?.room === 'kitchen' ? UtensilsCrossed : Box;
+        const DetailIcon = itemForDetail?.room === 'bedroom' ? Home : 
+                           itemForDetail?.room === 'bathroom' ? Bath : 
+                           itemForDetail?.room === 'kitchen' ? UtensilsCrossed : 
+                           itemForDetail?.room === 'living room' ? Armchair :
+                           itemForDetail?.room === 'office' ? Monitor :
+                           itemForDetail?.room === 'garage' ? Wrench : Box;
 
         return (
           <div className="flex flex-col min-h-full animate-in slide-in-from-right duration-500">
@@ -757,13 +887,21 @@ export default function Phase6Page() {
                 <DetailIcon className="w-32 h-32 mb-4" />
                 <span className="text-[10px] font-mono uppercase tracking-[0.4em]">No Photo Captured</span>
               </div>
-              <button className="absolute bottom-8 px-8 py-3 bg-white border border-[#D8CFBE] rounded-full text-[10px] font-mono uppercase tracking-widest text-[#1C3829] shadow-lg">Add Photo</button>
+              <button 
+                onClick={() => {
+                  setCameraReturnScreen('itemDetail');
+                  setCurrentScreen('camera');
+                }}
+                className="absolute bottom-8 px-8 py-3 bg-white border border-[#D8CFBE] rounded-full text-[10px] font-mono uppercase tracking-widest text-[#1C3829] shadow-lg"
+              >
+                Add Photo
+              </button>
             </div>
 
             {/* Info Section */}
-            <div className="px-2 mb-10">
-              <h1 className="text-4xl font-serif italic text-[#1C3829] leading-tight mb-3">{itemForDetail?.name}</h1>
-              <div className="flex gap-2 mb-4">
+            <div className="px-2 mb-10 min-w-0">
+              <h1 className="text-4xl font-serif italic text-[#1C3829] leading-tight mb-3 break-words">{itemForDetail?.name}</h1>
+              <div className="flex flex-wrap gap-2 mb-4">
                 <span className="px-4 py-1.5 rounded-full bg-[#1C3829] text-[9px] font-mono uppercase tracking-widest text-white">{itemForDetail?.room}</span>
                 <span className="px-4 py-1.5 rounded-full bg-[#B8965A]/10 text-[9px] font-mono uppercase tracking-widest text-[#B8965A] border border-[#B8965A]/20">Qty: {itemForDetail?.qty}</span>
               </div>
@@ -771,14 +909,14 @@ export default function Phase6Page() {
               {itemForDetail?.labels && itemForDetail.labels.length > 0 && (
                 <div className="flex flex-wrap gap-2 mb-6">
                   {itemForDetail.labels.map(label => (
-                    <span key={label} className="px-3 py-1 bg-white border border-[#D8CFBE] rounded-full text-[9px] font-mono text-[#1C3829]/60 uppercase tracking-widest">
+                    <span key={label} className="px-3 py-1 bg-white border border-[#D8CFBE] rounded-full text-[9px] font-mono text-[#1C3829]/60 uppercase tracking-widest break-all">
                       #{label}
                     </span>
                   ))}
                 </div>
               )}
 
-              <div className="text-[9px] text-[#0E1F14]/40 font-mono uppercase tracking-widest">
+              <div className="text-[9px] text-[#0E1F14]/70 font-mono uppercase tracking-widest">
                 {formatMetadata(itemForDetail?.createdAt, itemForDetail?.updatedAt)}
               </div>
             </div>
@@ -786,34 +924,34 @@ export default function Phase6Page() {
             {/* Info Grid */}
             <div className="bg-white border border-[#D8CFBE] rounded-[2.5rem] overflow-hidden mb-12 shadow-sm">
               {/* Location Row */}
-              <div className="flex justify-between items-center p-6 border-b border-[#D8CFBE]/30">
-                <span className="text-[10px] font-mono uppercase tracking-widest text-[#0E1F14]/30">Specific Location</span>
+              <div className="flex justify-between items-center p-6 border-b border-[#D8CFBE]/30 gap-4">
+                <span className="text-[10px] font-mono uppercase tracking-widest text-[#0E1F14]/60 flex-shrink-0">Specific Location</span>
                 {isEditingSpot ? (
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 flex-1 justify-end">
                     <input 
                       type="text" 
                       value={editedSpot}
                       onChange={(e) => setEditedSpot(e.target.value)}
-                      className="bg-[#F6F1E9] border border-[#D8CFBE] rounded-lg px-3 py-1 text-sm font-serif italic text-[#1C3829] focus:outline-none focus:border-[#1C3829] w-32"
+                      className="bg-[#F6F1E9] border border-[#D8CFBE] rounded-lg px-3 py-1 text-sm font-serif italic text-[#1C3829] focus:outline-none focus:border-[#1C3829] w-full max-w-[150px]"
                       autoFocus
                       onKeyDown={(e) => e.key === 'Enter' && handleUpdateDetailSpot()}
                     />
                     <button 
                       onClick={handleUpdateDetailSpot}
-                      className="text-[10px] font-mono uppercase tracking-widest text-green-600 font-bold px-2 py-1 hover:bg-green-50 rounded transition-colors"
+                      className="text-[10px] font-mono uppercase tracking-widest text-green-600 font-bold px-2 py-1 hover:bg-green-50 rounded transition-colors flex-shrink-0"
                     >
                       Save
                     </button>
                   </div>
                 ) : (
-                  <div className="flex items-center gap-3">
-                    <span className="text-sm font-serif italic text-[#1C3829] capitalize">{itemForDetail?.spot}</span>
+                  <div className="flex items-center gap-3 min-w-0 justify-end">
+                    <span className="text-sm font-serif italic text-[#1C3829] capitalize break-words text-right">{itemForDetail?.spot}</span>
                     <button 
                       onClick={() => {
                         setEditedSpot(itemForDetail?.spot || '');
                         setIsEditingSpot(true);
                       }}
-                      className="text-[10px] font-mono uppercase tracking-widest text-[#B8965A] hover:text-[#1C3829] transition-colors"
+                      className="text-[10px] font-mono uppercase tracking-widest text-[#B8965A] hover:text-[#1C3829] transition-colors flex-shrink-0"
                     >
                       Edit
                     </button>
@@ -823,13 +961,13 @@ export default function Phase6Page() {
 
               {/* Last Updated Row */}
               <div className="flex justify-between items-center p-6 border-b border-[#D8CFBE]/30">
-                <span className="text-[10px] font-mono uppercase tracking-widest text-[#0E1F14]/30">Last Updated</span>
+                <span className="text-[10px] font-mono uppercase tracking-widest text-[#0E1F14]/60">Last Updated</span>
                 <span className="text-sm font-serif italic text-[#1C3829] capitalize">{formatDate(itemForDetail?.updatedAt || '')}</span>
               </div>
 
               {/* ID Row */}
               <div className="flex justify-between items-center p-6">
-                <span className="text-[10px] font-mono uppercase tracking-widest text-[#0E1F14]/30">Inventory ID</span>
+                <span className="text-[10px] font-mono uppercase tracking-widest text-[#0E1F14]/60">Inventory ID</span>
                 <span className="text-sm font-serif italic text-[#1C3829] capitalize">#{itemForDetail?.id}</span>
               </div>
             </div>
@@ -856,7 +994,12 @@ export default function Phase6Page() {
         );
       case 'foundSuccess':
         const foundItem = inventory.find(i => i.id === selectedItemForDetail);
-        const SuccessIcon = foundItem?.room === 'electronics' ? Laptop : foundItem?.room === 'bathroom' ? Bath : foundItem?.room === 'kitchen' ? UtensilsCrossed : Box;
+        const SuccessIcon = foundItem?.room === 'bedroom' ? Home : 
+                           foundItem?.room === 'bathroom' ? Bath : 
+                           foundItem?.room === 'kitchen' ? UtensilsCrossed : 
+                           foundItem?.room === 'living room' ? Armchair :
+                           foundItem?.room === 'office' ? Monitor :
+                           foundItem?.room === 'garage' ? Wrench : Box;
 
         return (
           <div className="flex flex-col min-h-full items-center justify-center text-center animate-in zoom-in-95 duration-700">
@@ -869,16 +1012,16 @@ export default function Phase6Page() {
             </div>
 
             <h1 className="text-6xl font-serif italic text-[#1C3829] mb-4">Splendid.</h1>
-            <p className="text-sm text-[#0E1F14]/40 font-mono uppercase tracking-[0.3em] mb-12">Item confirmed in place</p>
+            <p className="text-sm text-[#0E1F14]/70 font-mono uppercase tracking-[0.3em] mb-12">Item confirmed in place</p>
 
             {/* Preview Card */}
-            <div className="w-full bg-white border border-[#D8CFBE] rounded-[3rem] p-8 mb-16 flex items-center gap-8 text-left shadow-xl shadow-[#1C3829]/5">
-              <div className="w-20 h-20 rounded-[1.5rem] bg-[#F6F1E9] flex items-center justify-center text-[#1C3829]">
+            <div className="w-full bg-white border border-[#D8CFBE] rounded-[3rem] p-8 mb-16 flex items-center gap-8 text-left shadow-xl shadow-[#1C3829]/5 min-w-0">
+              <div className="w-20 h-20 rounded-[1.5rem] bg-[#F6F1E9] flex items-center justify-center text-[#1C3829] flex-shrink-0">
                 <SuccessIcon className="w-10 h-10" />
               </div>
-              <div>
-                <h3 className="text-2xl font-serif italic text-[#1C3829] leading-tight mb-1">{foundItem?.name}</h3>
-                <p className="text-[10px] text-[#0E1F14]/40 font-mono uppercase tracking-widest">Safe in {foundItem?.room}</p>
+              <div className="min-w-0">
+                <h3 className="text-2xl font-serif italic text-[#1C3829] leading-tight mb-1 break-words">{foundItem?.name}</h3>
+                <p className="text-[10px] text-[#0E1F14]/70 font-mono uppercase tracking-widest break-words">Safe in {foundItem?.room}</p>
               </div>
             </div>
 
@@ -951,28 +1094,28 @@ export default function Phase6Page() {
               <div className="flex justify-around items-center">
                 <button 
                   onClick={() => setCurrentScreen('home')}
-                  className={`flex flex-col items-center gap-1.5 transition-all duration-300 ${currentScreen === 'home' ? 'text-[#1C3829] scale-110' : 'text-[#0E1F14]/20 hover:text-[#1C3829]'}`}
+                  className={`flex flex-col items-center gap-1.5 transition-all duration-300 ${currentScreen === 'home' ? 'text-[#1C3829] scale-110' : 'text-[#0E1F14]/50 hover:text-[#1C3829]'}`}
                 >
                   <Home className="w-6 h-6" fill={currentScreen === 'home' ? 'currentColor' : 'none'} />
                   <span className="text-[10px] font-bold tracking-tight">Home</span>
                 </button>
                 <button 
                   onClick={() => setCurrentScreen('search')}
-                  className={`flex flex-col items-center gap-1.5 transition-all duration-300 ${currentScreen === 'search' ? 'text-[#1C3829] scale-110' : 'text-[#0E1F14]/20 hover:text-[#1C3829]'}`}
+                  className={`flex flex-col items-center gap-1.5 transition-all duration-300 ${currentScreen === 'search' ? 'text-[#1C3829] scale-110' : 'text-[#0E1F14]/50 hover:text-[#1C3829]'}`}
                 >
                   <Search className="w-6 h-6" strokeWidth={currentScreen === 'search' ? 3 : 2} />
                   <span className="text-[10px] font-bold tracking-tight">Find</span>
                 </button>
                 <button 
                   onClick={() => setCurrentScreen('stock')}
-                  className={`flex flex-col items-center gap-1.5 transition-all duration-300 ${currentScreen === 'stock' ? 'text-[#1C3829] scale-110' : 'text-[#0E1F14]/20 hover:text-[#1C3829]'}`}
+                  className={`flex flex-col items-center gap-1.5 transition-all duration-300 ${currentScreen === 'stock' ? 'text-[#1C3829] scale-110' : 'text-[#0E1F14]/50 hover:text-[#1C3829]'}`}
                 >
                   <Box className="w-6 h-6" fill={currentScreen === 'stock' ? 'currentColor' : 'none'} />
                   <span className="text-[10px] font-bold tracking-tight">Stock</span>
                 </button>
                 <button 
                   onClick={() => setCurrentScreen('profile')}
-                  className={`flex flex-col items-center gap-1.5 transition-all duration-300 ${currentScreen === 'profile' ? 'text-[#1C3829] scale-110' : 'text-[#0E1F14]/20 hover:text-[#1C3829]'}`}
+                  className={`flex flex-col items-center gap-1.5 transition-all duration-300 ${currentScreen === 'profile' ? 'text-[#1C3829] scale-110' : 'text-[#0E1F14]/50 hover:text-[#1C3829]'}`}
                 >
                   <User className="w-6 h-6" fill={currentScreen === 'profile' ? 'currentColor' : 'none'} />
                   <span className="text-[10px] font-bold tracking-tight">You</span>
