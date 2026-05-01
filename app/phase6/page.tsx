@@ -1089,7 +1089,10 @@ export default function Phase6Page() {
           {/* Floating FAB - Only on Home */}
           {currentScreen === 'home' && (
             <button 
-              onClick={() => setCurrentScreen('camera')}
+              onClick={() => {
+                setCameraReturnScreen('addForm');
+                setCurrentScreen('camera');
+              }}
               className="absolute bottom-6 right-8 w-16 h-16 bg-[#1C3829] rounded-[2rem] shadow-[0_20px_40px_rgba(28,56,41,0.3)] flex items-center justify-center text-[#F6F1E9] hover:scale-110 hover:-rotate-3 active:scale-95 transition-all z-30 animate-in zoom-in-50 duration-500"
             >
               <Plus className="w-10 h-10" />
