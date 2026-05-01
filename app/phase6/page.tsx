@@ -4,26 +4,39 @@ import React, { useState, useEffect } from 'react';
 import { Home, Search, Box, User, Battery, Wifi, Signal, Mic, Plus, Minus, ChevronRight, Laptop, Bath, UtensilsCrossed, ArrowLeft, Camera, Upload, LogOut, Armchair, Monitor, Wrench } from 'lucide-react';
 
 const INITIAL_INVENTORY = [
-  { 
-    id: 1, 
-    name: 'Spare Pillow', 
-    room: 'bedroom', 
-    spot: 'closet shelf', 
-    qty: 2,
-    labels: ['essential', 'bedding'],
-    createdAt: '2026-04-01T10:00:00Z',
-    updatedAt: '2026-04-01T10:00:00Z'
-  },
-  { 
-    id: 2, 
-    name: 'Toilet Paper', 
-    room: 'bathroom', 
-    spot: 'cabinet', 
-    qty: 8,
-    labels: ['stock', 'daily'],
-    createdAt: '2026-04-10T14:30:00Z',
-    updatedAt: '2026-04-15T09:41:00Z'
-  }
+  // Bedroom
+  { id: 1,  name: 'Spare Pillow',        room: 'bedroom',     spot: 'closet shelf',      qty: 2,  labels: ['essential', 'bedding'],          createdAt: '2026-03-01T09:00:00Z', updatedAt: '2026-04-01T10:00:00Z' },
+  { id: 2,  name: 'Winter Duvet',        room: 'bedroom',     spot: 'top shelf wardrobe', qty: 1,  labels: ['seasonal', 'bedding'],           createdAt: '2026-01-15T11:00:00Z', updatedAt: '2026-03-20T08:00:00Z' },
+  { id: 3,  name: 'Passport',            room: 'bedroom',     spot: 'bedside drawer',    qty: 1,  labels: ['document', 'important'],         createdAt: '2025-11-10T14:00:00Z', updatedAt: '2026-02-01T09:00:00Z' },
+  { id: 4,  name: 'Phone Charger',       room: 'bedroom',     spot: 'bedside table',     qty: 2,  labels: ['electronics', 'daily'],          createdAt: '2026-02-20T10:30:00Z', updatedAt: '2026-04-10T07:45:00Z' },
+
+  // Bathroom
+  { id: 5,  name: 'Toilet Paper',        room: 'bathroom',    spot: 'under sink cabinet', qty: 12, labels: ['stock', 'daily'],               createdAt: '2026-04-10T14:30:00Z', updatedAt: '2026-04-15T09:41:00Z' },
+  { id: 6,  name: 'Shampoo',             room: 'bathroom',    spot: 'shower caddy',      qty: 2,  labels: ['hygiene', 'stock'],              createdAt: '2026-03-25T08:00:00Z', updatedAt: '2026-04-18T07:00:00Z' },
+  { id: 7,  name: 'Ibuprofen',           room: 'bathroom',    spot: 'medicine cabinet',  qty: 1,  labels: ['medicine', 'essential'],         createdAt: '2026-01-05T12:00:00Z', updatedAt: '2026-03-01T10:00:00Z' },
+  { id: 8,  name: 'Spare Towels',        room: 'bathroom',    spot: 'linen shelf',       qty: 4,  labels: ['bedding', 'essential'],          createdAt: '2026-02-14T09:00:00Z', updatedAt: '2026-04-02T11:00:00Z' },
+
+  // Kitchen
+  { id: 9,  name: 'AA Batteries',        room: 'kitchen',     spot: 'junk drawer',       qty: 8,  labels: ['electronics', 'stock'],          createdAt: '2026-03-10T15:00:00Z', updatedAt: '2026-04-05T14:00:00Z' },
+  { id: 10, name: 'Coffee Pods',         room: 'kitchen',     spot: 'pantry top shelf',  qty: 24, labels: ['daily', 'stock', 'coffee'],      createdAt: '2026-04-01T08:00:00Z', updatedAt: '2026-04-20T07:30:00Z' },
+  { id: 11, name: 'Olive Oil',           room: 'kitchen',     spot: 'pantry middle shelf', qty: 2, labels: ['cooking', 'stock'],             createdAt: '2026-03-18T10:00:00Z', updatedAt: '2026-04-12T09:00:00Z' },
+  { id: 12, name: 'Fire Extinguisher',   room: 'kitchen',     spot: 'under sink',        qty: 1,  labels: ['safety', 'essential'],           createdAt: '2025-09-01T12:00:00Z', updatedAt: '2026-01-15T10:00:00Z' },
+
+  // Living Room
+  { id: 13, name: 'TV Remote',           room: 'living room', spot: 'coffee table drawer', qty: 2, labels: ['electronics', 'daily'],         createdAt: '2026-02-01T16:00:00Z', updatedAt: '2026-04-08T20:00:00Z' },
+  { id: 14, name: 'HDMI Cable',          room: 'living room', spot: 'media console',     qty: 3,  labels: ['electronics', 'cable'],          createdAt: '2026-01-20T14:00:00Z', updatedAt: '2026-03-05T11:00:00Z' },
+  { id: 15, name: 'Throw Blanket',       room: 'living room', spot: 'sofa basket',       qty: 2,  labels: ['comfort', 'seasonal'],           createdAt: '2026-02-10T10:00:00Z', updatedAt: '2026-04-01T09:00:00Z' },
+
+  // Office
+  { id: 16, name: 'Laptop Stand',        room: 'office',      spot: 'desk surface',      qty: 1,  labels: ['electronics', 'ergonomics'],     createdAt: '2026-01-10T09:00:00Z', updatedAt: '2026-02-15T10:00:00Z' },
+  { id: 17, name: 'Printer Paper',       room: 'office',      spot: 'bottom shelf',      qty: 5,  labels: ['stock', 'office-supply'],        createdAt: '2026-03-05T11:00:00Z', updatedAt: '2026-04-10T14:00:00Z' },
+  { id: 18, name: 'External Hard Drive', room: 'office',      spot: 'desk drawer',       qty: 2,  labels: ['electronics', 'backup', 'important'], createdAt: '2025-12-01T10:00:00Z', updatedAt: '2026-02-20T09:00:00Z' },
+
+  // Garage
+  { id: 19, name: 'Power Drill',         room: 'garage',      spot: 'pegboard wall',     qty: 1,  labels: ['tools', 'power-tool'],           createdAt: '2025-10-15T12:00:00Z', updatedAt: '2026-03-01T10:00:00Z' },
+  { id: 20, name: 'Motor Oil',           room: 'garage',      spot: 'metal shelf',       qty: 3,  labels: ['automotive', 'stock'],           createdAt: '2026-02-28T09:00:00Z', updatedAt: '2026-04-14T08:00:00Z' },
+  { id: 21, name: 'Jumper Cables',       room: 'garage',      spot: 'trunk of car',      qty: 1,  labels: ['automotive', 'emergency'],       createdAt: '2025-11-20T14:00:00Z', updatedAt: '2026-01-10T09:00:00Z' },
+  { id: 22, name: 'Duct Tape',           room: 'garage',      spot: 'toolbox',           qty: 2,  labels: ['tools', 'stock'],                createdAt: '2026-03-12T10:00:00Z', updatedAt: '2026-04-03T11:00:00Z' },
 ];
 
 export default function Phase6Page() {
@@ -58,6 +71,12 @@ export default function Phase6Page() {
 
   // Camera Navigation State
   const [cameraReturnScreen, setCameraReturnScreen] = useState('home');
+
+  // Close menus when screen changes
+  useEffect(() => {
+    setIsSearchMenuOpen(false);
+    setIsStockMenuOpen(false);
+  }, [currentScreen]);
 
   // Determine if Nav should be hidden
   const isNavHidden = ['camera', 'voiceSearch', 'updateStock', 'itemDetail', 'foundSuccess'].includes(currentScreen);
@@ -385,11 +404,11 @@ export default function Phase6Page() {
                   <input 
                     type="number"
                     value={quantity}
-                    onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 0))}
-                    className="flex-1 text-center font-serif italic text-3xl text-[#1C3829] bg-transparent border-none focus:outline-none w-full"
+                    onChange={(e) => setQuantity(Math.min(99, Math.max(1, parseInt(e.target.value) || 1)))}
+                    className="flex-1 min-w-0 text-center font-serif italic text-2xl text-[#1C3829] bg-transparent border-none focus:outline-none"
                   />
                   <button 
-                    onClick={() => setQuantity(quantity + 1)}
+                    onClick={() => setQuantity(Math.min(99, quantity + 1))}
                     className="w-12 h-12 rounded-xl bg-[#F6F1E9] flex items-center justify-center text-[#1C3829] active:scale-90 transition-all flex-shrink-0"
                   >
                     <Plus className="w-5 h-5" />
@@ -444,12 +463,15 @@ export default function Phase6Page() {
               </button>
             </div>
 
-            {/* Filter Chips & Menu */}
-            <div className="flex items-center gap-2 mb-10 overflow-x-auto pb-4 no-scrollbar">
-              <div className="relative flex-shrink-0 mr-2">
-                <button 
+            {/* Filter Menu */}
+            <div className="flex justify-between items-center px-2 mb-8">
+              <h2 className="text-[10px] font-mono uppercase tracking-[0.3em] text-[#0E1F14]/50">
+                {activeFilter === 'All' ? 'Filter by Room' : activeFilter}
+              </h2>
+              <div className="relative">
+                <button
                   onClick={() => setIsSearchMenuOpen(!isSearchMenuOpen)}
-                  className="w-12 h-12 rounded-2xl bg-[#1C3829]/5 flex flex-col items-center justify-center gap-1 hover:bg-[#1C3829]/10 transition-all cursor-pointer"
+                  className="flex gap-1 p-2 hover:bg-[#1C3829]/5 rounded-lg transition-colors cursor-pointer"
                 >
                   <div className="w-1 h-1 rounded-full bg-[#1C3829]/40" />
                   <div className="w-1 h-1 rounded-full bg-[#1C3829]/40" />
@@ -457,7 +479,7 @@ export default function Phase6Page() {
                 </button>
 
                 {isSearchMenuOpen && (
-                  <div className="absolute left-0 top-full mt-2 w-48 bg-white border border-[#D8CFBE] rounded-2xl shadow-xl z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+                  <div className="absolute right-0 top-full mt-2 w-48 bg-white border border-[#D8CFBE] rounded-2xl shadow-xl z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
                     <div className="p-2 bg-[#F6F1E9]/30 border-b border-[#D8CFBE]/30 text-[8px] font-mono uppercase tracking-widest text-[#0E1F14]/70 px-4 py-2">
                       Filter by Room
                     </div>
@@ -478,20 +500,6 @@ export default function Phase6Page() {
                   </div>
                 )}
               </div>
-
-              {['All', 'Bedroom', 'Bathroom', 'Kitchen', 'Living Room', 'Office', 'Garage'].map((filter) => (
-                <button 
-                  key={filter}
-                  onClick={() => setActiveFilter(filter)}
-                  className={`px-8 py-3 rounded-2xl text-[10px] font-mono uppercase tracking-widest transition-all whitespace-nowrap ${
-                    activeFilter === filter 
-                      ? 'bg-[#1C3829] text-[#F6F1E9] shadow-lg shadow-[#1C3829]/20' 
-                      : 'bg-white border border-[#D8CFBE] text-[#0E1F14]/60 hover:border-[#1C3829]/30'
-                  }`}
-                >
-                  {filter}
-                </button>
-              ))}
             </div>
 
             {/* Results Area */}
@@ -776,11 +784,11 @@ export default function Phase6Page() {
                   <input 
                     type="number"
                     value={tempQty}
-                    onChange={(e) => setTempQty(Math.max(0, parseInt(e.target.value) || 0))}
-                    className="text-7xl font-serif italic text-[#1C3829] w-32 text-center bg-transparent border-none focus:outline-none"
+                    onChange={(e) => setTempQty(Math.min(99, Math.max(0, parseInt(e.target.value) || 0)))}
+                    className="flex-1 min-w-0 text-center font-serif italic text-4xl text-[#1C3829] bg-transparent border-none focus:outline-none"
                   />
                   <button 
-                    onClick={() => setTempQty(tempQty + 1)}
+                    onClick={() => setTempQty(Math.min(99, tempQty + 1))}
                     className="w-16 h-16 rounded-2xl bg-[#F6F1E9] flex items-center justify-center text-[#1C3829] active:scale-90 transition-all shadow-sm flex-shrink-0"
                   >
                     <Plus className="w-8 h-8" />
