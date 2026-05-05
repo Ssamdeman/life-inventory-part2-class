@@ -73,6 +73,13 @@ export default function Phase6Page() {
   // Camera Navigation State
   const [cameraReturnScreen, setCameraReturnScreen] = useState('home');
 
+  // Voice Search State
+  const [voiceRecognizedText, setVoiceRecognizedText] = useState('');
+
+  // Captured Photo State
+  const [capturedPhoto, setCapturedPhoto] = useState<string | null>(null);
+  const [cameraFlash, setCameraFlash] = useState(false);
+
   // Profile accordion state — which panel is open, or null for none
   const [openProfilePanel, setOpenProfilePanel] = useState<string | null>(null);
 
@@ -84,6 +91,31 @@ export default function Phase6Page() {
   useEffect(() => {
     setIsSearchMenuOpen(false);
     setIsStockMenuOpen(false);
+  }, [currentScreen]);
+
+  // Simulated voice recognition
+  useEffect(() => {
+    if (currentScreen !== 'voiceSearch') {
+      setVoiceRecognizedText('');
+      return;
+    }
+
+    const VOICE_TERMS = ["phone charger", "batteries", "passport", "toilet paper", "coffee pods", "duct tape"];
+    const picked = VOICE_TERMS[Math.floor(Math.random() * VOICE_TERMS.length)];
+
+    const showTextTimer = setTimeout(() => {
+      setVoiceRecognizedText(picked);
+    }, 1500);
+
+    const navigateTimer = setTimeout(() => {
+      setSearchQuery(picked);
+      setCurrentScreen('search');
+    }, 2500);
+
+    return () => {
+      clearTimeout(showTextTimer);
+      clearTimeout(navigateTimer);
+    };
   }, [currentScreen]);
 
   // Determine if Nav should be hidden
@@ -141,6 +173,7 @@ export default function Phase6Page() {
     setQuantity(1);
     setLabels([]);
     setCurrentLabel('');
+    setCapturedPhoto(null);
 
     setCurrentScreen('addSuccess');
   };
@@ -261,6 +294,11 @@ export default function Phase6Page() {
       case 'camera':
         return (
           <div className="absolute inset-0 bg-black z-50 flex flex-col animate-in fade-in duration-500">
+            {/* Flash overlay */}
+            {cameraFlash && (
+              <div className="absolute inset-0 bg-white z-[80] pointer-events-none animate-[cameraFlash_0.6s_ease-out_forwards]" />
+            )}
+
             {/* Camera Header */}
             <div className="p-8 flex items-center justify-between">
               <button onClick={() => setCurrentScreen(cameraReturnScreen)} className="w-12 h-12 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center text-white active:scale-90 transition-transform">
@@ -281,7 +319,7 @@ export default function Phase6Page() {
                 <div className="absolute top-0 right-0 w-12 h-12 border-t-2 border-r-2 border-white/40 rounded-tr-3xl" />
                 <div className="absolute bottom-0 left-0 w-12 h-12 border-b-2 border-l-2 border-white/40 rounded-bl-3xl" />
                 <div className="absolute bottom-0 right-0 w-12 h-12 border-b-2 border-r-2 border-white/40 rounded-br-3xl" />
-                
+
                 <div className="absolute inset-0 flex items-center justify-center">
                   <Camera className="w-20 h-20 text-white/5" />
                 </div>
@@ -290,13 +328,29 @@ export default function Phase6Page() {
 
             {/* Camera Controls */}
             <div className="p-12 pb-20 flex flex-col items-center gap-10">
-              <button 
-                onClick={() => setCurrentScreen(cameraReturnScreen)}
+              <button
+                onClick={() => {
+                  const photos = [
+                    '/assets/phase6/alexunder-hess-bWZAPKm0zZE-unsplash.jpg',
+                    '/assets/phase6/irina-krutova-U2xNwPEJlc-unsplash.jpg',
+                    '/assets/phase6/jakob-owens-esbfaHABh7Y-unsplash.jpg',
+                    '/assets/phase6/markus-winkler-vcwRpwRniOQ-unsplash.jpg',
+                    '/assets/phase6/oscar-nilsson-W-oqNwbmin0-unsplash.jpg',
+                    '/assets/phase6/volodymyr-hryshchenko-inI8GnmS190-unsplash.jpg',
+                  ];
+                  const picked = photos[Math.floor(Math.random() * photos.length)];
+                  setCapturedPhoto(picked);
+                  setCameraFlash(true);
+                  setTimeout(() => {
+                    setCameraFlash(false);
+                    setCurrentScreen(cameraReturnScreen);
+                  }, 600);
+                }}
                 className="w-24 h-24 rounded-full border-4 border-white p-1.5 active:scale-90 transition-transform"
               >
                 <div className="w-full h-full rounded-full bg-white" />
               </button>
-              <button 
+              <button
                 onClick={() => setCurrentScreen(cameraReturnScreen)}
                 className="text-white/60 text-[10px] font-mono uppercase tracking-[0.3em] hover:text-white transition-colors border-b border-white/10 pb-1"
               >
@@ -362,18 +416,38 @@ export default function Phase6Page() {
 
               <div className="space-y-3">
                 <label className="text-[10px] font-mono uppercase tracking-[0.2em] text-[#0E1F14]/70 ml-1">Visual Reference</label>
-                <div 
-                  onClick={() => {
-                    setCameraReturnScreen('addForm');
-                    setCurrentScreen('camera');
-                  }}
-                  className="w-full h-44 border-2 border-dashed border-[#D8CFBE] rounded-3xl flex flex-col items-center justify-center text-[#1C3829]/30 hover:border-[#1C3829]/40 hover:bg-[#1C3829]/5 transition-all cursor-pointer group"
-                >
-                  <div className="w-12 h-12 rounded-full bg-[#1C3829]/5 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
-                    <Upload className="w-6 h-6" />
+                {capturedPhoto ? (
+                  <div className="w-full h-44 border-2 border-dashed border-[#1C3829]/30 rounded-3xl relative overflow-hidden">
+                    <img
+                      src={capturedPhoto}
+                      alt="Captured"
+                      className="w-full h-full object-cover"
+                    />
+                    <button
+                      onClick={() => {
+                        setCapturedPhoto(null);
+                        setCameraReturnScreen('addForm');
+                        setCurrentScreen('camera');
+                      }}
+                      className="absolute top-2 right-2 px-3 py-1.5 bg-black/60 backdrop-blur-sm text-white text-[9px] font-mono uppercase tracking-[0.2em] rounded-full hover:bg-black/80 active:scale-95 transition-all"
+                    >
+                      Retake
+                    </button>
                   </div>
-                  <span className="text-[10px] font-mono uppercase tracking-[0.2em]">Upload Photo</span>
-                </div>
+                ) : (
+                  <div
+                    onClick={() => {
+                      setCameraReturnScreen('addForm');
+                      setCurrentScreen('camera');
+                    }}
+                    className="w-full h-44 border-2 border-dashed border-[#D8CFBE] rounded-3xl flex flex-col items-center justify-center text-[#1C3829]/30 hover:border-[#1C3829]/40 hover:bg-[#1C3829]/5 transition-all cursor-pointer group"
+                  >
+                    <div className="w-12 h-12 rounded-full bg-[#1C3829]/5 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                      <Upload className="w-6 h-6" />
+                    </div>
+                    <span className="text-[10px] font-mono uppercase tracking-[0.2em]">Upload Photo</span>
+                  </div>
+                )}
               </div>
 
               <div className="space-y-3">
@@ -580,8 +654,12 @@ export default function Phase6Page() {
       case 'voiceSearch':
         return (
           <div className="absolute inset-0 bg-[#1C3829] z-50 flex flex-col items-center justify-center p-12 animate-in fade-in duration-500">
-            <button 
-              onClick={() => setCurrentScreen('search')}
+            <button
+              onClick={() => {
+                setVoiceRecognizedText('');
+                setSearchQuery('');
+                setCurrentScreen('search');
+              }}
               className="absolute top-12 left-8 w-12 h-12 rounded-full bg-white/10 flex items-center justify-center text-white active:scale-90 transition-transform"
             >
               <ArrowLeft className="w-6 h-6" />
@@ -592,7 +670,7 @@ export default function Phase6Page() {
                 {/* Pulsing Rings */}
                 <div className="absolute inset-0 rounded-full bg-white/20 animate-ping" />
                 <div className="absolute inset-0 rounded-full bg-white/10 animate-ping [animation-delay:0.5s]" />
-                
+
                 <div className="relative w-32 h-32 rounded-full bg-white flex items-center justify-center text-[#1C3829] shadow-2xl">
                   <Mic className="w-12 h-12" />
                 </div>
@@ -606,20 +684,37 @@ export default function Phase6Page() {
               {/* Mock Waveform */}
               <div className="flex items-end gap-1.5 h-16">
                 {[0.4, 0.7, 0.5, 0.9, 0.6, 0.8, 0.4, 0.7, 0.5].map((h, i) => (
-                  <div 
+                  <div
                     key={i}
                     className="w-1.5 bg-white/30 rounded-full animate-pulse"
-                    style={{ 
+                    style={{
                       height: `${h * 100}%`,
                       animationDelay: `${i * 0.1}s`
                     }}
                   />
                 ))}
               </div>
+
+              {/* Recognized text — fades in after ~1.5s */}
+              <div
+                className="transition-all duration-700 ease-in-out"
+                style={{
+                  opacity: voiceRecognizedText ? 1 : 0,
+                  transform: voiceRecognizedText ? 'translateY(0)' : 'translateY(8px)',
+                }}
+              >
+                <p className="text-3xl font-serif italic text-[#F6F1E9] tracking-wide">
+                  &ldquo;{voiceRecognizedText}&rdquo;
+                </p>
+              </div>
             </div>
 
-            <button 
-              onClick={() => setCurrentScreen('search')}
+            <button
+              onClick={() => {
+                setVoiceRecognizedText('');
+                setSearchQuery('');
+                setCurrentScreen('search');
+              }}
               className="absolute bottom-20 text-white/60 font-mono text-[10px] uppercase tracking-[0.4em] border-b border-white/20 pb-1"
             >
               Tap to cancel
@@ -978,22 +1073,46 @@ export default function Phase6Page() {
               </button>
             </div>
 
-            {/* Photo Placeholder */}
-            <div className="w-full aspect-[4/5] rounded-[3rem] bg-white border border-[#D8CFBE] flex flex-col items-center justify-center mb-10 shadow-inner group overflow-hidden relative">
-              <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[#1C3829]/5 pointer-events-none" />
-              <div className="flex flex-col items-center text-[#1C3829]/10 group-hover:scale-110 transition-transform duration-700">
-                <DetailIcon className="w-32 h-32 mb-4" />
-                <span className="text-[10px] font-mono uppercase tracking-[0.4em]">No Photo Captured</span>
-              </div>
-              <button 
-                onClick={() => {
-                  setCameraReturnScreen('itemDetail');
-                  setCurrentScreen('camera');
-                }}
-                className="absolute bottom-8 px-8 py-3 bg-white border border-[#D8CFBE] rounded-full text-[10px] font-mono uppercase tracking-widest text-[#1C3829] shadow-lg"
-              >
-                Add Photo
-              </button>
+            {/* Photo Area */}
+            <div className="w-full aspect-[4/5] rounded-[3rem] bg-white border border-[#D8CFBE] mb-10 shadow-inner overflow-hidden relative group">
+              {capturedPhoto ? (
+                <>
+                  <img
+                    src={capturedPhoto}
+                    alt="Item photo"
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[#1C3829]/10 pointer-events-none" />
+                  <button
+                    onClick={() => {
+                      setCameraReturnScreen('itemDetail');
+                      setCurrentScreen('camera');
+                    }}
+                    className="absolute bottom-8 left-1/2 -translate-x-1/2 px-8 py-3 bg-black/50 backdrop-blur-sm border border-white/20 rounded-full text-[10px] font-mono uppercase tracking-widest text-white shadow-lg"
+                  >
+                    Retake Photo
+                  </button>
+                </>
+              ) : (
+                <>
+                  <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[#1C3829]/5 pointer-events-none" />
+                  <div className="w-full h-full flex flex-col items-center justify-center">
+                    <div className="flex flex-col items-center text-[#1C3829]/10 group-hover:scale-110 transition-transform duration-700">
+                      <DetailIcon className="w-32 h-32 mb-4" />
+                      <span className="text-[10px] font-mono uppercase tracking-[0.4em]">No Photo Captured</span>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => {
+                      setCameraReturnScreen('itemDetail');
+                      setCurrentScreen('camera');
+                    }}
+                    className="absolute bottom-8 left-1/2 -translate-x-1/2 px-8 py-3 bg-white border border-[#D8CFBE] rounded-full text-[10px] font-mono uppercase tracking-widest text-[#1C3829] shadow-lg"
+                  >
+                    Add Photo
+                  </button>
+                </>
+              )}
             </div>
 
             {/* Info Section */}
