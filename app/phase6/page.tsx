@@ -68,9 +68,17 @@ export default function Phase6Page() {
   // Stock Filter State
   const [stockFilter, setStockFilter] = useState('All');
   const [isStockMenuOpen, setIsStockMenuOpen] = useState(false);
+  const [stockSort, setStockSort] = useState<'name' | 'qty_asc' | 'qty_desc'>('name');
 
   // Camera Navigation State
   const [cameraReturnScreen, setCameraReturnScreen] = useState('home');
+
+  // Profile accordion state — which panel is open, or null for none
+  const [openProfilePanel, setOpenProfilePanel] = useState<string | null>(null);
+
+  // Add Success State
+  const [lastAddedName, setLastAddedName] = useState('');
+  const [lastAddedRoom, setLastAddedRoom] = useState('');
 
   // Close menus when screen changes
   useEffect(() => {
@@ -79,7 +87,7 @@ export default function Phase6Page() {
   }, [currentScreen]);
 
   // Determine if Nav should be hidden
-  const isNavHidden = ['camera', 'voiceSearch', 'updateStock', 'itemDetail', 'foundSuccess'].includes(currentScreen);
+  const isNavHidden = ['camera', 'voiceSearch', 'updateStock', 'itemDetail', 'foundSuccess', 'addSuccess'].includes(currentScreen);
 
   const getCountByRoom = (room: string) => {
     return inventory.filter(item => item.room === room.toLowerCase()).length;
@@ -121,7 +129,11 @@ export default function Phase6Page() {
     };
 
     setInventory(prev => [...prev, newItem]);
-    
+
+    // Capture details for success screen before resetting
+    setLastAddedName(itemName);
+    setLastAddedRoom(selectedRoom.toLowerCase());
+
     // Reset Form
     setItemName('');
     setSelectedRoom('bedroom');
@@ -129,8 +141,8 @@ export default function Phase6Page() {
     setQuantity(1);
     setLabels([]);
     setCurrentLabel('');
-    
-    setCurrentScreen('home');
+
+    setCurrentScreen('addSuccess');
   };
 
   const handleDeleteItem = () => {
@@ -634,6 +646,27 @@ export default function Phase6Page() {
               </div>
             </div>
 
+            {/* Sort Pills */}
+            <div className="flex gap-2 mb-6">
+              {([
+                { key: 'name',     label: 'Name' },
+                { key: 'qty_asc',  label: 'Qty ↑' },
+                { key: 'qty_desc', label: 'Qty ↓' },
+              ] as { key: 'name' | 'qty_asc' | 'qty_desc'; label: string }[]).map(pill => (
+                <button
+                  key={pill.key}
+                  onClick={() => setStockSort(pill.key)}
+                  className={`px-3 py-1.5 rounded-full text-[9px] font-mono uppercase tracking-[0.15em] border transition-all ${
+                    stockSort === pill.key
+                      ? 'bg-[#1C3829] text-[#F6F1E9] border-[#1C3829]'
+                      : 'bg-transparent text-[#0E1F14]/50 border-[#D8CFBE] hover:border-[#1C3829]/40 hover:text-[#1C3829]/70'
+                  }`}
+                >
+                  {pill.label}
+                </button>
+              ))}
+            </div>
+
             {/* Stock List */}
             <div className="space-y-4 relative">
               <div className="flex justify-between items-center px-2 mb-2">
@@ -676,8 +709,14 @@ export default function Phase6Page() {
               
               {inventory
                 .filter(item => stockFilter === 'All' || item.room.toLowerCase() === stockFilter.toLowerCase())
+                .slice()
+                .sort((a, b) => {
+                  if (stockSort === 'qty_asc') return a.qty - b.qty;
+                  if (stockSort === 'qty_desc') return b.qty - a.qty;
+                  return a.name.localeCompare(b.name);
+                })
                 .map((item, i) => (
-                <div 
+                <div
                   key={item.id}
                   onClick={() => {
                     setSelectedItemForUpdate(item.id);
@@ -686,14 +725,14 @@ export default function Phase6Page() {
                     setTempQty(item.qty);
                     setCurrentScreen('updateStock');
                   }}
-                  className="flex items-center p-6 bg-white border border-[#D8CFBE]/60 rounded-3xl hover:border-[#1C3829]/30 transition-all cursor-pointer group active:scale-[0.98] animate-in fade-in slide-in-from-bottom-4 duration-500"
+                  className={`flex items-center p-6 bg-white border rounded-3xl hover:border-[#1C3829]/30 transition-all cursor-pointer group active:scale-[0.98] animate-in fade-in slide-in-from-bottom-4 duration-500 ${item.qty === 0 ? 'border-[#C0392B]/30' : 'border-[#D8CFBE]/60'}`}
                   style={{ animationDelay: `${i * 50}ms` }}
                 >
                   <div className="flex-1 min-w-0">
                     <h3 className="text-xl font-serif italic text-[#1C3829] leading-tight break-words">{item.name}</h3>
                     <p className="text-[9px] text-[#0E1F14]/70 font-mono uppercase tracking-widest mt-1.5 break-words">{item.room} · {item.spot}</p>
                   </div>
-                  <div className="text-5xl font-serif italic text-[#B8965A] ml-6 group-hover:scale-110 transition-transform">
+                  <div className={`text-5xl font-serif italic ml-6 group-hover:scale-110 transition-transform ${item.qty === 0 ? 'text-[#C0392B]' : 'text-[#B8965A]'}`}>
                     {item.qty}
                   </div>
                 </div>
@@ -836,19 +875,70 @@ export default function Phase6Page() {
               <div className="space-y-3">
                 <h2 className="text-[10px] font-mono uppercase tracking-[0.3em] text-[#0E1F14]/50 ml-4">Account Settings</h2>
                 <div className="bg-white border border-[#D8CFBE] rounded-[2.5rem] overflow-hidden shadow-sm">
-                  {[
-                    { label: "Profile Information", value: "Edit ›" },
-                    { label: "Security & Privacy", value: "Safe ›" },
-                    { label: "Inventory Backups", value: "Daily ›" }
-                  ].map((row, i, arr) => (
-                    <button 
-                      key={row.label}
-                      className={`w-full flex justify-between items-center p-6 hover:bg-[#F6F1E9]/50 active:bg-[#F6F1E9] transition-colors text-left ${i !== arr.length - 1 ? 'border-b border-[#D8CFBE]/30' : ''}`}
-                    >
-                      <span className="text-sm font-medium text-[#0E1F14]">{row.label}</span>
-                      <span className="text-[11px] font-mono text-[#B8965A] uppercase tracking-wider">{row.value}</span>
-                    </button>
-                  ))}
+                  {([
+                    {
+                      label: "Profile Information",
+                      key: "profile-info",
+                      closedBadge: "Edit ›",
+                      rows: [
+                        { field: "Display Name", val: "Sonal Doiphode" },
+                        { field: "Email", val: "sonal@lifeinventory.app" },
+                        { field: "Member Since", val: "Jan 2026" },
+                      ]
+                    },
+                    {
+                      label: "Security & Privacy",
+                      key: "security-privacy",
+                      closedBadge: "Safe ›",
+                      rows: [
+                        { field: "Two-Factor Auth", val: "Enabled" },
+                        { field: "Data Stored Locally", val: "Yes" },
+                        { field: "Last Login", val: "Today" },
+                      ]
+                    },
+                    {
+                      label: "Inventory Backups",
+                      key: "backups",
+                      closedBadge: "Daily ›",
+                      rows: [
+                        { field: "Backup Frequency", val: "Daily" },
+                        { field: "Last Backup", val: "Today" },
+                        { field: "Storage Used", val: "2.4 MB" },
+                      ]
+                    }
+                  ] as { label: string; key: string; closedBadge: string; rows: { field: string; val: string }[] }[]).map((section, i, arr) => {
+                    const isOpen = openProfilePanel === section.key;
+                    const isLast = i === arr.length - 1;
+                    return (
+                      <div key={section.key} className={!isLast || isOpen ? 'border-b border-[#D8CFBE]/30' : ''}>
+                        {/* Row trigger */}
+                        <button
+                          onClick={() => setOpenProfilePanel(isOpen ? null : section.key)}
+                          className="w-full flex justify-between items-center p-6 hover:bg-[#F6F1E9]/50 active:bg-[#F6F1E9] transition-colors text-left"
+                        >
+                          <span className="text-sm font-medium text-[#0E1F14]">{section.label}</span>
+                          <span className={`text-[11px] font-mono uppercase tracking-wider transition-colors ${isOpen ? 'text-[#1C3829]' : 'text-[#B8965A]'}`}>
+                            {isOpen ? '▲ Close' : section.closedBadge}
+                          </span>
+                        </button>
+
+                        {/* Expandable panel */}
+                        {isOpen && (
+                          <div className="mx-4 mb-4 bg-[#F6F1E9] border border-[#D8CFBE]/60 rounded-2xl overflow-hidden animate-in fade-in slide-in-from-top-2 duration-300">
+                            {section.rows.map((r, ri) => (
+                              <div
+                                key={r.field}
+                                className={`flex justify-between items-center px-5 py-3.5 ${ri !== section.rows.length - 1 ? 'border-b border-[#D8CFBE]/40' : ''}`}
+                              >
+                                <span className="text-[10px] font-mono uppercase tracking-widest text-[#0E1F14]/50">{r.field}</span>
+                                <span className="text-xs font-serif italic text-[#1C3829]">{r.val}</span>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
 
@@ -996,6 +1086,54 @@ export default function Phase6Page() {
                 className="flex-1 h-20 bg-white border border-[#D8CFBE] text-[#C0392B] rounded-3xl font-serif italic text-2xl hover:bg-red-50 active:scale-[0.98] transition-all"
               >
                 Lost
+              </button>
+            </div>
+          </div>
+        );
+      case 'addSuccess':
+        const AddedRoomIcon = lastAddedRoom === 'bedroom' ? Home :
+                              lastAddedRoom === 'bathroom' ? Bath :
+                              lastAddedRoom === 'kitchen' ? UtensilsCrossed :
+                              lastAddedRoom === 'living room' ? Armchair :
+                              lastAddedRoom === 'office' ? Monitor :
+                              lastAddedRoom === 'garage' ? Wrench : Box;
+        return (
+          <div className="flex flex-col min-h-full items-center justify-center text-center animate-in zoom-in-95 duration-700">
+            {/* Success Animation Area */}
+            <div className="mb-16 relative">
+              <div className="w-40 h-40 rounded-full bg-[#B8965A] flex items-center justify-center text-6xl shadow-[0_20px_60px_rgba(184,150,90,0.4)] animate-bounce">
+                ✦
+              </div>
+              <div className="absolute inset-0 w-40 h-40 rounded-full border-4 border-[#B8965A] animate-ping opacity-10" />
+            </div>
+
+            <h1 className="text-6xl font-serif italic text-[#1C3829] mb-4">Catalogued.</h1>
+            <p className="text-sm text-[#0E1F14]/70 font-mono uppercase tracking-[0.3em] mb-12">Item safely stored in your inventory</p>
+
+            {/* Preview Card */}
+            <div className="w-full bg-white border border-[#D8CFBE] rounded-[3rem] p-8 mb-16 flex items-center gap-8 text-left shadow-xl shadow-[#1C3829]/5 min-w-0">
+              <div className="w-20 h-20 rounded-[1.5rem] bg-[#F6F1E9] flex items-center justify-center text-[#1C3829] flex-shrink-0">
+                <AddedRoomIcon className="w-10 h-10" />
+              </div>
+              <div className="min-w-0">
+                <h3 className="text-2xl font-serif italic text-[#1C3829] leading-tight mb-1 break-words">{lastAddedName}</h3>
+                <p className="text-[10px] text-[#0E1F14]/70 font-mono uppercase tracking-widest break-words">Stored in {lastAddedRoom}</p>
+              </div>
+            </div>
+
+            {/* Stacked Buttons */}
+            <div className="w-full space-y-4 mb-10">
+              <button
+                onClick={() => setCurrentScreen('home')}
+                className="w-full h-20 bg-[#1C3829] text-[#F6F1E9] rounded-3xl font-serif italic text-2xl shadow-xl shadow-[#1C3829]/20 active:scale-[0.98] transition-all"
+              >
+                Back to Home
+              </button>
+              <button
+                onClick={() => setCurrentScreen('addForm')}
+                className="w-full h-20 bg-white border border-[#D8CFBE] text-[#1C3829] rounded-3xl font-serif italic text-2xl active:scale-[0.98] transition-all"
+              >
+                Add Another
               </button>
             </div>
           </div>

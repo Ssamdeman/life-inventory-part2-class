@@ -1,20 +1,87 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# Life Inventory
 
-# Run and deploy your AI Studio app
+**HCI Semester Project — Group 13**
 
-This contains everything you need to run your app locally.
+An external brain for your physical possessions. Life Inventory is a household item tracker that lets you record where things live, search for them quickly, and manage quantities across rooms in your home.
 
-View your app in AI Studio: https://ai.studio/apps/8fd056ed-4c62-4153-914b-d8169c95639e
+**Team:** Sonal Dattraj Doiphode, Richard Huang, Samuel Damon
 
-## Run Locally
+---
 
-**Prerequisites:**  Node.js
+## Tech Stack
 
+| Layer | Technology |
+|---|---|
+| Framework | Next.js 15 (App Router) |
+| UI Library | React 19 |
+| Language | TypeScript |
+| Styling | Tailwind CSS 4 |
+| Animation | Framer Motion |
+| Icons | Lucide React |
+| AI | Google Gemini API |
+
+---
+
+## Application Routes
+
+| Route | Description |
+|---|---|
+| `/` | Hub — landing page and navigation |
+| `/phase3` | Early interactive prototypes |
+| `/phase4` | Paper prototyping phase |
+| `/phase6` | React MVP (the main application) |
+
+---
+
+## Phase 6 MVP Features
+
+### Item Management
+- Add a new item with name, room, specific spot, quantity, and labels/hashtags
+- Addition flow ends with a "Catalogued" confirmation screen
+- Edit any item's room, spot, and quantity
+- Delete an item from the inventory
+- Item detail screen showing location, last updated timestamp, and a "Found it!" confirmation action
+
+### Browse and Search
+- Browse all items organized by room: Bedroom, Bathroom, Kitchen, Living Room, Office, Garage
+- Search items by name or label
+- Filter search results by room
+- Voice search UI (mock interface)
+
+### Stock Management
+- View all items with current quantities
+- Filter stock view by room
+- Sort by Name, Quantity (ascending), or Quantity (descending)
+- Items at zero quantity display a red warning state
+
+### Profile
+- Profile screen with expandable account settings panels
+
+---
+
+## Running Locally
+
+**Prerequisites:** Node.js 18+
 
 1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+   ```bash
+   npm install
+   ```
+
+2. Create a `.env.local` file and add your Gemini API key:
+   ```
+   GEMINI_API_KEY=your_api_key_here
+   ```
+
+3. Start the development server:
+   ```bash
+   npm run dev
+   ```
+
+4. Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+---
+
+## Project Context
+
+This project was developed across multiple phases as part of an HCI course, progressing from concept and paper prototypes through to a functional React MVP. Each route (`/phase3`, `/phase4`, `/phase6`) corresponds to a distinct deliverable phase.
