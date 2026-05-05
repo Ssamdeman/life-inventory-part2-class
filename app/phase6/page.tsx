@@ -1319,9 +1319,9 @@ export default function Phase6Page() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0A0A0A] flex items-center justify-center p-4 md:p-8 font-sans antialiased">
+    <div className="h-screen bg-[#0A0A0A] flex items-center justify-center p-2 font-sans antialiased">
       {/* Mobile Phone Shell */}
-      <div className="relative w-full max-w-[400px] h-[860px] bg-[#F6F1E9] rounded-[4rem] shadow-[0_0_100px_rgba(0,0,0,0.7)] overflow-hidden border-[10px] border-[#1C1C1C] flex flex-col ring-1 ring-white/10">
+      <div className="relative w-full max-w-[360px] h-[94vh] max-h-[780px] bg-[#F6F1E9] rounded-[4rem] shadow-[0_0_100px_rgba(0,0,0,0.7)] overflow-hidden border-[10px] border-[#1C1C1C] flex flex-col ring-1 ring-white/10">
         
         {/* Mock Status Bar */}
         <div className={`h-12 px-10 flex justify-between items-end pb-2 z-[60] flex-shrink-0 transition-colors duration-500 ${currentScreen === 'camera' ? 'text-white' : 'text-[#0E1F14]'}`}>
